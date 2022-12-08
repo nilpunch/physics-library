@@ -1,0 +1,8 @@
+﻿{
+  "name": "physics-library",
+  "version": "0.1.0",
+  "type": "library",
+  "displayName": "Physics",
+  "unity": "2021.2",
+  "description": "Composition-based physics library."
+}

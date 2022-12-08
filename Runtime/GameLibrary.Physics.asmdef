@@ -1,0 +1,16 @@
+{
+    "name": "GameLibrary.Physics",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4e4e9db485367974ba99b2fb7f19741d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}
