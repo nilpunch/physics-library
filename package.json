@@ -1,6 +1,6 @@
 ﻿{
   "name": "physics-library",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "library",
   "displayName": "Physics",
   "unity": "2021.2",

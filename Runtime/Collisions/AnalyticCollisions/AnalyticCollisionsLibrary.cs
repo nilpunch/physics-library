@@ -1,6 +1,6 @@
-﻿namespace GameLibrary.Physics
+﻿namespace GameLibrary.Physics.MatrixColliders
 {
-    public class MatrixMatrixCollisionsLibrary : IMatrixCollisionsLibrary
+    public class AnalyticCollisionsLibrary : IAnalyticCollisionsLibrary
     {
         public Collision BoxAgainstBox(Box first, Box second)
         {

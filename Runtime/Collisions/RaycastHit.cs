@@ -1,6 +1,6 @@
 ﻿namespace GameLibrary.Physics
 {
-    public struct RaycastHit<THitResult>
+    public readonly struct RaycastHit<THitResult>
     {
         public bool Occure { get; }
 

@@ -1,11 +1,14 @@
-﻿namespace GameLibrary.Physics
+﻿namespace GameLibrary.Physics.MatrixColliders
 {
-    public interface IMatrixCollider
+    /// <summary>
+    /// Monolith collider interface with one-to-one collision description.
+    /// </summary>
+    public interface IAnalyticCollider
     {
         /// <summary>
         /// Double dispatch method.
         /// </summary>
-        Collision Collide(IMatrixCollider matrixCollider);
+        Collision Collide(IAnalyticCollider analyticCollider);
 
         Collision CollideAgainstBox(Box box);
         Collision CollideAgainstSphere(Sphere sphere);

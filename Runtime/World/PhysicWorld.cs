@@ -6,19 +6,30 @@ using GameLibrary.Mathematics;
 
 namespace GameLibrary.Physics
 {
-    public class PhysicWorld<TBody, TCollider> : IPhysicWorld<TBody>, IPhysicStep
-        where TBody : IPhysicalBody<TCollider>
+    public class PhysicWorld<TBody, TCollider> : IPhysicWorld<TBody, TCollider>, IPhysicStep
     {
+        private readonly struct BodyColliderPair
+        {
+            public BodyColliderPair(TBody body, TCollider collider)
+            {
+                Body = body;
+                Collider = collider;
+            }
+
+            public TBody Body { get; }
+            public TCollider Collider { get; }
+        }
+
         private readonly ICollisionCollector<TCollider> _collector;
         private readonly ICollisionSolver<TBody> _solver;
 
-        private readonly List<TBody> _bodies;
+        private readonly List<BodyColliderPair> _bodies;
 
         public PhysicWorld(ICollisionCollector<TCollider> collector, ICollisionSolver<TBody> solver)
         {
             _collector = collector;
             _solver = solver;
-            _bodies = new List<TBody>();
+            _bodies = new List<BodyColliderPair>();
         }
 
         public void Step(long stepMilliseconds)
@@ -30,7 +41,7 @@ namespace GameLibrary.Physics
 
             Dictionary<TCollider, TBody> collidersBodies =
                 new Dictionary<TCollider, TBody>(_bodies.Select(body =>
-                    new KeyValuePair<TCollider, TBody>(body.Collider, body)));
+                    new KeyValuePair<TCollider, TBody>(body.Collider, body.Body)));
 
             CollisionManifold<TCollider>[] collisionManifolds =
                 _collector.CollectManifolds(collidersBodies.Keys.ToArray());
@@ -42,14 +53,14 @@ namespace GameLibrary.Physics
                     manifold.Collision)).ToArray(), stepMilliseconds);
         }
 
-        public void Add(TBody body)
+        public void Add(TBody body, TCollider collider)
         {
-            _bodies.Add(body);
+            _bodies.Add(new BodyColliderPair(body, collider));
         }
 
         public void Remove(TBody body)
         {
-            _bodies.Remove(body);
+            _bodies.RemoveAll(pair => ReferenceEquals(pair.Body, body));
         }
 
         public CollisionManifold<TBody>[] CollisionsWith(TBody body)

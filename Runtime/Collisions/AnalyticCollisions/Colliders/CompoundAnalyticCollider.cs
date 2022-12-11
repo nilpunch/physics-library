@@ -1,20 +1,20 @@
-﻿namespace GameLibrary.Physics
+﻿namespace GameLibrary.Physics.MatrixColliders
 {
-    public class CompoundMatrixCollider : IMatrixCollider
+    public class CompoundAnalyticCollider : IAnalyticCollider
     {
-        private readonly IMatrixCollider[] _collidingShells;
+        private readonly IAnalyticCollider[] _collidingShells;
 
-        public CompoundMatrixCollider(IMatrixCollider[] collidingShells)
+        public CompoundAnalyticCollider(IAnalyticCollider[] collidingShells)
         {
             _collidingShells = collidingShells;
         }
 
-        public Collision Collide(IMatrixCollider matrixCollider)
+        public Collision Collide(IAnalyticCollider analyticCollider)
         {
             Collision collision = new Collision();
 
             foreach (var shell in _collidingShells)
-                collision = collision.Merge(shell.Collide(matrixCollider));
+                collision = collision.Merge(shell.Collide(analyticCollider));
 
             return collision;
         }

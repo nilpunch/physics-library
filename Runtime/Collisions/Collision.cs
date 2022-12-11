@@ -11,8 +11,15 @@ namespace GameLibrary.Physics
 
         public SoftVector3 PenetrationNormal { get; }
 
-        public float PenetrationDepth { get; }
+        public SoftFloat PenetrationDepth { get; }
 
+        public Collision(bool occure, ContactPoint[] contacts, SoftVector3 penetrationNormal, SoftFloat penetrationDepth)
+        {
+            Occure = occure;
+            Contacts = contacts;
+            PenetrationNormal = penetrationNormal;
+            PenetrationDepth = penetrationDepth;
+        }
 
         public Collision Merge(Collision other)
         {
