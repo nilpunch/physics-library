@@ -2,9 +2,8 @@
 
 namespace GameLibrary.Physics
 {
-    public interface IRigidbody
+    public interface IRigidbody : ITransform
     {
-        SoftVector3 Position { get; set; }
         SoftVector3 Velocity { get; set; }
     }
 }

@@ -1,13 +1,13 @@
 ﻿using GameLibrary.Mathematics;
 
-namespace GameLibrary.Physics.GJK
+namespace GameLibrary.Physics.SupportMapping
 {
-    public class Box : ISupportMappingCollider
+    public class BoxCollider : ISupportMappingCollider
     {
         private readonly SoftVector3 _centre;
         private readonly SoftVector3 _extents;
 
-        public Box(SoftVector3 centre, SoftVector3 extents)
+        public BoxCollider(SoftVector3 centre, SoftVector3 extents)
         {
             _centre = centre;
             _extents = extents;

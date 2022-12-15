@@ -1,4 +1,4 @@
-﻿namespace GameLibrary.Physics.GJK
+﻿namespace GameLibrary.Physics.SupportMapping
 {
     public class RigidbodyCollisionSolver : ICollisionSolver<IRigidbody>
     {

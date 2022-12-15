@@ -20,14 +20,14 @@ namespace GameLibrary.Physics
             public TCollider Collider { get; }
         }
 
-        private readonly ICollisionCollector<TCollider> _collector;
+        private readonly ICollisionDetector<TCollider> _detector;
         private readonly ICollisionSolver<TBody> _solver;
 
         private readonly List<BodyColliderPair> _bodies;
 
-        public PhysicWorld(ICollisionCollector<TCollider> collector, ICollisionSolver<TBody> solver)
+        public PhysicWorld(ICollisionDetector<TCollider> detector, ICollisionSolver<TBody> solver)
         {
-            _collector = collector;
+            _detector = detector;
             _solver = solver;
             _bodies = new List<BodyColliderPair>();
         }
@@ -44,7 +44,7 @@ namespace GameLibrary.Physics
                     new KeyValuePair<TCollider, TBody>(body.Collider, body.Body)));
 
             CollisionManifold<TCollider>[] collisionManifolds =
-                _collector.CollectManifolds(collidersBodies.Keys.ToArray());
+                _detector.FindManifolds(collidersBodies.Keys.ToArray());
 
             _solver.Solve(collisionManifolds.Select(manifold =>
                 new BodiesCollision<TBody>(

@@ -1,13 +1,13 @@
 ﻿using GameLibrary.Mathematics;
 
-namespace GameLibrary.Physics.GJK
+namespace GameLibrary.Physics.SupportMapping
 {
-    public class Sphere : ISupportMappingCollider
+    public class SphereCollider : ISupportMappingCollider
     {
         private readonly SoftVector3 _centre;
         private readonly SoftFloat _radius;
 
-        public Sphere(SoftVector3 centre, SoftFloat radius)
+        public SphereCollider(SoftVector3 centre, SoftFloat radius)
         {
             _centre = centre;
             _radius = radius;

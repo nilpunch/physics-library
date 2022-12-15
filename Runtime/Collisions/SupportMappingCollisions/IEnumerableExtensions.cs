@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GameLibrary.Physics.GJK
+namespace GameLibrary.Physics.SupportMapping
 {
     public static class IEnumerableExtensions
     {
