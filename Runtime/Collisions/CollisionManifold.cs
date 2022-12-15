@@ -1,16 +1,18 @@
-﻿namespace GameLibrary.Physics
+﻿using System;
+
+namespace GameLibrary.Physics
 {
-    public struct CollisionManifold<TCollider>
+    public struct CollisionManifold
     {
-        public CollisionManifold(TCollider first, TCollider second, Collision collision)
+        public CollisionManifold(Guid first, Guid second, Collision collision)
         {
             First = first;
             Second = second;
             Collision = collision;
         }
 
-        public TCollider First { get; }
-        public TCollider Second { get; }
+        public Guid First { get; }
+        public Guid Second { get; }
         public Collision Collision { get; }
     }
 }

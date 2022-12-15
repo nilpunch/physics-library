@@ -1,14 +1,15 @@
-﻿using GameLibrary.Mathematics;
+﻿using System;
+using GameLibrary.Mathematics;
 
 namespace GameLibrary.Physics.SupportMapping
 {
-    public class TranslateRotateCollider : ISupportMappingCollider
+    public class TranslateRotateCollider : ISMCollider
     {
-        private readonly ISupportMappingCollider _collider;
+        private readonly ISMCollider _collider;
         private readonly SoftUnitQuaternion _rotation;
         private readonly SoftVector3 _translation;
 
-        public TranslateRotateCollider(ISupportMappingCollider collider,
+        public TranslateRotateCollider(ISMCollider collider,
             SoftUnitQuaternion rotation,
             SoftVector3 translation)
         {
@@ -16,6 +17,8 @@ namespace GameLibrary.Physics.SupportMapping
             _rotation = rotation;
             _translation = translation;
         }
+
+        public Guid Id => _collider.Id;
 
         public SoftVector3 Centre
         {

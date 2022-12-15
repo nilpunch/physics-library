@@ -24,7 +24,7 @@ namespace GameLibrary.Physics.SupportMapping
             public SoftVector3 Direction { get; }
         }
 
-        public static Result Calculate(ISupportMappingCollider shapeA, ISupportMappingCollider shapeB, int maxIterations)
+        public static Result Calculate(ISMCollider shapeA, ISMCollider shapeB, int maxIterations)
         {
             List<SoftVector3> simplex = new List<SoftVector3>();
 
@@ -57,7 +57,7 @@ namespace GameLibrary.Physics.SupportMapping
             return new Result(colliding, simplex, iterations, direction);
         }
 
-        public static SoftVector3 MinkowskiDifference(ISupportMappingCollider shapeA, ISupportMappingCollider shapeB, SoftVector3 direction)
+        public static SoftVector3 MinkowskiDifference(ISMCollider shapeA, ISMCollider shapeB, SoftVector3 direction)
         {
             return shapeA.SupportPoint(direction) - shapeB.SupportPoint(-direction);
         }
@@ -79,7 +79,7 @@ namespace GameLibrary.Physics.SupportMapping
 
 
         private static (bool encloseOrigin, SoftVector3 nextDirection) TryEncloseOrigin(List<SoftVector3> simplex,
-            ISupportMappingCollider shapeA, ISupportMappingCollider shapeB, SoftVector3 direction)
+            ISMCollider shapeA, ISMCollider shapeB, SoftVector3 direction)
         {
             switch (simplex.Count)
             {

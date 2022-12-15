@@ -2,34 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameLibrary.Mathematics;
+using GameLibrary.Physics.SupportMapping;
 
 
 namespace GameLibrary.Physics
 {
-    public class PhysicWorld<TBody, TCollider> : IPhysicWorld<TBody, TCollider>, IPhysicStep
+    public class PhysicWorld<TBody> : IPhysicWorld<TBody>, IPhysicStep where TBody : IUnique
     {
-        private readonly struct BodyColliderPair
-        {
-            public BodyColliderPair(TBody body, TCollider collider)
-            {
-                Body = body;
-                Collider = collider;
-            }
-
-            public TBody Body { get; }
-            public TCollider Collider { get; }
-        }
-
-        private readonly ICollisionDetector<TCollider> _detector;
+        private readonly ICollisionDetector _collisionDetector;
         private readonly ICollisionSolver<TBody> _solver;
 
-        private readonly List<BodyColliderPair> _bodies;
+        private readonly Dictionary<Guid, TBody> _bodies;
 
-        public PhysicWorld(ICollisionDetector<TCollider> detector, ICollisionSolver<TBody> solver)
+        public PhysicWorld(ICollisionDetector collisionDetector, ICollisionSolver<TBody> solver)
         {
-            _detector = detector;
+            _collisionDetector = collisionDetector;
             _solver = solver;
-            _bodies = new List<BodyColliderPair>();
+            _bodies = new Dictionary<Guid, TBody>();
         }
 
         public void Step(long stepMilliseconds)
@@ -39,38 +28,32 @@ namespace GameLibrary.Physics
             // 2. Collect collisions
             // 3. Solve collisions
 
-            Dictionary<TCollider, TBody> collidersBodies =
-                new Dictionary<TCollider, TBody>(_bodies.Select(body =>
-                    new KeyValuePair<TCollider, TBody>(body.Collider, body.Body)));
+            CollisionManifold[] collisionManifolds = _collisionDetector.FindCollisions();
 
-            CollisionManifold<TCollider>[] collisionManifolds =
-                _detector.FindManifolds(collidersBodies.Keys.ToArray());
+            BodiesCollision<TBody>[] bodiesCollisions = collisionManifolds.Select(manifold =>
+                new BodiesCollision<TBody>(_bodies[manifold.First], _bodies[manifold.Second], manifold.Collision)).ToArray();
 
-            _solver.Solve(collisionManifolds.Select(manifold =>
-                new BodiesCollision<TBody>(
-                    collidersBodies[manifold.First],
-                    collidersBodies[manifold.Second],
-                    manifold.Collision)).ToArray(), stepMilliseconds);
+            _solver.Solve(bodiesCollisions, stepMilliseconds);
         }
 
-        public void Add(TBody body, TCollider collider)
+        public void Add(TBody body)
         {
-            _bodies.Add(new BodyColliderPair(body, collider));
+            _bodies.Add(body.Id, body);
         }
 
         public void Remove(TBody body)
         {
-            _bodies.RemoveAll(pair => ReferenceEquals(pair.Body, body));
+            _bodies.Remove(body.Id);
         }
 
-        public CollisionManifold<TBody>[] CollisionsWith(TBody body)
+        public CollisionManifold[] CollisionsWith(TBody body)
         {
             Collision collision = new Collision();
 
             // foreach (var simulatedObject in bodies.Where(obj => !obj.Equals(body)))
             //     collision = collision.Merge(simulatedObject.Collider.Collide(body.Collider));
 
-            return Array.Empty<CollisionManifold<TBody>>();
+            return Array.Empty<CollisionManifold>();
         }
 
         public RaycastHit<TBody> Raycast(SoftVector3 from, SoftVector3 direction)

@@ -16,7 +16,7 @@ namespace GameLibrary.Physics.SupportPoint
 
         public struct MinkowskiDifference
         {
-            public ISupportMappingCollider SupportA, SupportB;
+            public ISMCollider SupportA, SupportB;
 
             public void Support(in SoftVector3 direction, out SoftVector3 vA, out SoftVector3 vB, out SoftVector3 v)
             {
@@ -393,7 +393,7 @@ namespace GameLibrary.Physics.SupportPoint
             }
         }
 
-        public static Collision Detect(ISupportMappingCollider supportA, ISupportMappingCollider supportB)
+        public static Collision Detect(ISMCollider supportA, ISMCollider supportB)
         {
             var epaSolver = new GjkepaSolver();
 

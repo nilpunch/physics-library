@@ -1,8 +1,8 @@
 ﻿namespace GameLibrary.Physics
 {
-    public interface IPhysicWorld<TBody, in TCollider> : ICollisionsWorld<TBody>
+    public interface IPhysicWorld<TBody> : IRaycastWorld<TBody>
     {
-        void Add(TBody body, TCollider collider);
+        void Add(TBody body);
         void Remove(TBody body);
     }
 }

@@ -1,8 +1,9 @@
-﻿using GameLibrary.Mathematics;
+﻿using System;
+using GameLibrary.Mathematics;
 
 namespace GameLibrary.Physics.SupportMapping
 {
-    public class SphereCollider : ISupportMappingCollider
+    public class SphereCollider : ISMCollider
     {
         private readonly SoftVector3 _centre;
         private readonly SoftFloat _radius;
@@ -11,7 +12,10 @@ namespace GameLibrary.Physics.SupportMapping
         {
             _centre = centre;
             _radius = radius;
+            Id = Guid.NewGuid();
         }
+
+        public Guid Id { get; }
 
         public SoftVector3 Centre => _centre;
 

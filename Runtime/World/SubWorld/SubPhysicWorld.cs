@@ -4,25 +4,20 @@ using GameLibrary.Mathematics;
 
 namespace GameLibrary.Physics
 {
-    public class SubPhysicWorld<TBody, TCollider> : IPhysicWorld<TBody, TCollider>
+    public class SubPhysicWorld<TBody> : IPhysicWorld<TBody>
     {
-        private readonly IPhysicWorld<TBody, TCollider> _parent;
+        private readonly IPhysicWorld<TBody> _parent;
         private readonly List<TBody> _localBodies;
 
-        public SubPhysicWorld(IPhysicWorld<TBody, TCollider> parent)
+        public SubPhysicWorld(IPhysicWorld<TBody> parent)
         {
             _parent = parent;
             _localBodies = new List<TBody>();
         }
 
-        public RaycastHit<TBody> Raycast(SoftVector3 from, SoftVector3 direction)
+        public void Add(TBody body)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Add(TBody body, TCollider collider)
-        {
-            _parent.Add(body, collider);
+            _parent.Add(body);
             _localBodies.Add(body);
         }
 
@@ -30,6 +25,11 @@ namespace GameLibrary.Physics
         {
             _parent.Remove(body);
             _localBodies.Remove(body);
+        }
+
+        public RaycastHit<TBody> Raycast(SoftVector3 from, SoftVector3 direction)
+        {
+            throw new NotImplementedException();
         }
     }
 }

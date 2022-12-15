@@ -2,7 +2,7 @@
 
 namespace GameLibrary.Physics
 {
-    public interface ICollisionsWorld<TBody>
+    public interface IRaycastWorld<TBody>
     {
         RaycastHit<TBody> Raycast(SoftVector3 from, SoftVector3 direction);
     }

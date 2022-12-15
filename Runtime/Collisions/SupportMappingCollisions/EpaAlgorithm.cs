@@ -122,8 +122,8 @@ namespace GameLibrary.Physics.SupportMapping
             public int C { get; }
         }
 
-        public static (Collision collision, List<SoftVector3> polytope, List<PolytopeFace> polytopeFaces) Calculate(List<SoftVector3> simplex, ISupportMappingCollider shapeA,
-            ISupportMappingCollider shapeB, int maxIterations, out List<SoftVector3> specialPoints)
+        public static (Collision collision, List<SoftVector3> polytope, List<PolytopeFace> polytopeFaces) Calculate(List<SoftVector3> simplex, ISMCollider shapeA,
+            ISMCollider shapeB, int maxIterations, out List<SoftVector3> specialPoints)
         {
             List<SoftVector3> polytope = simplex.ToList();
             List<PolytopeFace> polytopeFaces = new List<PolytopeFace>
