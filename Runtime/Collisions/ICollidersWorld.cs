@@ -1,8 +1,6 @@
 ﻿namespace GameLibrary.Physics
 {
-    public interface ICollidersWorld<in TCollider> : ICollisionDetector
+    public interface ICollidersWorld<in TCollider> : IWorld<TCollider>
     {
-        void Add(TCollider collider);
-        void Remove(TCollider collider);
     }
 }

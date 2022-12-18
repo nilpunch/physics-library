@@ -1,7 +1,7 @@
 ﻿namespace GameLibrary.Physics
 {
-    public interface ICollisionSolver<TBody>
+    public interface ICollisionSolver<in TBody>
 	{
-		void Solve(BodiesCollision<TBody>[] bodiesCollisions, long timeStep);
+		void Solve(ICollisionManifold<TBody>[] bodiesCollisions, long timeStep);
 	}
 }

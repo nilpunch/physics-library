@@ -1,6 +1,6 @@
 ﻿using GameLibrary.Mathematics;
 
-namespace GameLibrary.Physics.MatrixColliders
+namespace GameLibrary.Physics.AnalyticColliders
 {
     public readonly struct Sphere
     {

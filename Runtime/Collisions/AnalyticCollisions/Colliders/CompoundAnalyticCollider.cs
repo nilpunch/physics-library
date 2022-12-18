@@ -1,4 +1,4 @@
-﻿namespace GameLibrary.Physics.MatrixColliders
+﻿namespace GameLibrary.Physics.AnalyticColliders
 {
     public class CompoundAnalyticCollider : IAnalyticCollider
     {

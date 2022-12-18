@@ -1,4 +1,4 @@
-﻿namespace GameLibrary.Physics.MatrixColliders
+﻿namespace GameLibrary.Physics.AnalyticColliders
 {
     /// <summary>
     /// Monolith collider interface with one-to-one collision description.
