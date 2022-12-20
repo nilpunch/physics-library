@@ -2,7 +2,7 @@
 
 namespace GameLibrary.Physics.AnalyticColliders
 {
-    public class AnalyticCollidersWorld<TConcrete> : IConcreteCollidersWorld<IAnalyticCollider, TConcrete>, IManifoldFinder<TConcrete>
+    public class AnalyticCollidersWorld<TConcrete> : IConcreteCollidersWorld<IAnalyticCollider, TConcrete>, ICollisions<TConcrete>
     {
         private readonly List<ConcreteCollider<IAnalyticCollider, TConcrete>> _collidingBodies;
 

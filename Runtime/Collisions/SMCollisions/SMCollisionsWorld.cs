@@ -2,7 +2,7 @@
 
 namespace GameLibrary.Physics.SupportMapping
 {
-    public class SMCollisionsWorld<TCollidingBody> : IConcreteCollidersWorld<ISMCollider, TCollidingBody>, IManifoldFinder<TCollidingBody>
+    public class SMCollisionsWorld<TCollidingBody> : IConcreteCollidersWorld<ISMCollider, TCollidingBody>, ICollisions<TCollidingBody>
     {
         private readonly int _maxIterations;
         private readonly List<ConcreteCollider<ISMCollider, TCollidingBody>> _collidingBodies;

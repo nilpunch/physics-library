@@ -9,18 +9,18 @@ namespace GameLibrary.Physics
 {
     public class PhysicSimulation<TBody> : ISimulate
     {
-        private readonly IManifoldFinder<TBody> _manifoldFinder;
-        private readonly ICollisionSolver<TBody> _solver;
+        private readonly ICollisions<TBody> _collisions;
+        private readonly ICollisionsSolver<TBody> _solver;
 
-        public PhysicSimulation(IManifoldFinder<TBody> manifoldFinder, ICollisionSolver<TBody> solver)
+        public PhysicSimulation(ICollisions<TBody> collisions, ICollisionsSolver<TBody> solver)
         {
-            _manifoldFinder = manifoldFinder;
+            _collisions = collisions;
             _solver = solver;
         }
 
         public void Step(long stepMilliseconds)
         {
-            ICollisionManifold<TBody>[] collisionManifolds = _manifoldFinder.FindCollisions();
+            ICollisionManifold<TBody>[] collisionManifolds = _collisions.FindCollisions();
             _solver.Solve(collisionManifolds, stepMilliseconds);
         }
     }

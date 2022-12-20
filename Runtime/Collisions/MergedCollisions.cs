@@ -2,11 +2,11 @@
 
 namespace GameLibrary.Physics
 {
-    public class MergedManifoldFinders<TBody> : IManifoldFinder<TBody>
+    public class MergedCollisions<TBody> : ICollisions<TBody>
     {
-        private readonly IManifoldFinder<TBody>[] _manifoldFinders;
+        private readonly ICollisions<TBody>[] _manifoldFinders;
 
-        public MergedManifoldFinders(IManifoldFinder<TBody>[] manifoldFinders)
+        public MergedCollisions(ICollisions<TBody>[] manifoldFinders)
         {
             _manifoldFinders = manifoldFinders;
         }
