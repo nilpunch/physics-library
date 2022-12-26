@@ -4,12 +4,14 @@ namespace GameLibrary.Physics.SupportMapping
 {
     public class SMCollisionsWorld<TCollidingBody> : IConcreteCollidersWorld<ISMCollider, TCollidingBody>, ICollisions<TCollidingBody>
     {
-        private readonly int _maxIterations;
+        private readonly int _maxGjkIterations;
+        private readonly int _maxEpaIterations;
         private readonly List<ConcreteCollider<ISMCollider, TCollidingBody>> _collidingBodies;
 
-        public SMCollisionsWorld(int maxIterations)
+        public SMCollisionsWorld(int maxGjkIterations, int maxEpaIterations)
         {
-            _maxIterations = maxIterations;
+            _maxGjkIterations = maxGjkIterations;
+            _maxEpaIterations = maxEpaIterations;
             _collidingBodies = new List<ConcreteCollider<ISMCollider, TCollidingBody>>();
         }
 
@@ -29,11 +31,11 @@ namespace GameLibrary.Physics.SupportMapping
 
             foreach (var (first, second) in _collidingBodies.DistinctPairs((a, b) => (a, b)))
             {
-                GjkAlgorithm.Result result = GjkAlgorithm.Calculate(first.Collider, second.Collider, _maxIterations);
+                GjkAlgorithm.Result result = GjkAlgorithm.Calculate(first.Collider, second.Collider, _maxGjkIterations);
 
                 if (result.CollisionHappened)
                 {
-                    Collision collision = default; //EpaAlgorithm.Calculate(result.Simplex, collidersPair.a, collidersPair.b, _maxIterations);
+                    Collision collision = EpaAlgorithm.Calculate(result.Simplex, first.Collider, second.Collider, _maxEpaIterations);
                     collisionManifolds.Add(new CollisionManifold<TCollidingBody>(first.Concrete, second.Concrete, collision));
                 }
             }
