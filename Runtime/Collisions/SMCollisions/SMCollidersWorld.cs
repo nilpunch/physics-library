@@ -2,13 +2,13 @@
 
 namespace GameLibrary.Physics.SupportMapping
 {
-    public class SMCollisionsWorld<TCollidingBody> : IConcreteCollidersWorld<ISMCollider, TCollidingBody>, ICollisions<TCollidingBody>
+    public class SMCollidersWorld<TCollidingBody> : IConcreteCollidersWorld<ISMCollider, TCollidingBody>, ICollisions<TCollidingBody>
     {
         private readonly int _maxGjkIterations;
         private readonly int _maxEpaIterations;
         private readonly List<ConcreteCollider<ISMCollider, TCollidingBody>> _collidingBodies;
 
-        public SMCollisionsWorld(int maxGjkIterations, int maxEpaIterations)
+        public SMCollidersWorld(int maxGjkIterations, int maxEpaIterations)
         {
             _maxGjkIterations = maxGjkIterations;
             _maxEpaIterations = maxEpaIterations;
