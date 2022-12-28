@@ -7,6 +7,8 @@ namespace GameLibrary.Physics.SupportMapping
 {
     public static class GjkAlgorithm
     {
+        private static SoftFloat Tolerance => (SoftFloat)0.0001f;
+
         public struct Result
         {
             public Result(bool collisionHappened, List<SoftVector3> simplex, int iterations, SoftVector3 direction)
@@ -31,7 +33,7 @@ namespace GameLibrary.Physics.SupportMapping
             SoftVector3 direction = SoftVector3.NormalizeSafe(shapeB.Centre - shapeA.Centre, SoftVector3.Up);
 
             bool colliding = false;
-            int iterations = 0;
+            int iterations = 1;
             while (iterations < maxIterations)
             {
                 iterations++;
@@ -76,7 +78,6 @@ namespace GameLibrary.Physics.SupportMapping
 
             return cross;
         }
-
 
         private static (bool encloseOrigin, SoftVector3 nextDirection) TryEncloseOrigin(List<SoftVector3> simplex,
             ISMCollider shapeA, ISMCollider shapeB, SoftVector3 direction)
@@ -163,7 +164,7 @@ namespace GameLibrary.Physics.SupportMapping
                         {
                             direction = -direction;
                         }
-                        if(SoftVector3.Dot(simplex[0], direction) < SoftFloat.Zero)
+                        if(SoftVector3.Dot(simplex[0], direction) < SoftFloat.Zero - Tolerance)
                         {
                             // remove d
                             simplex.RemoveAt(3);
@@ -176,7 +177,7 @@ namespace GameLibrary.Physics.SupportMapping
                         {
                             direction = -direction;
                         }
-                        if(SoftVector3.Dot(simplex[0], direction) < SoftFloat.Zero)
+                        if(SoftVector3.Dot(simplex[0], direction) < SoftFloat.Zero - Tolerance)
                         {
                             // remove c
                             simplex.RemoveAt(2);
@@ -189,7 +190,7 @@ namespace GameLibrary.Physics.SupportMapping
                         {
                             direction = -direction;
                         }
-                        if(SoftVector3.Dot(simplex[0], direction) < SoftFloat.Zero)
+                        if(SoftVector3.Dot(simplex[0], direction) < SoftFloat.Zero - Tolerance)
                         {
                             // remove b
                             simplex.RemoveAt(1);
@@ -202,7 +203,7 @@ namespace GameLibrary.Physics.SupportMapping
                         {
                             direction = -direction;
                         }
-                        if(SoftVector3.Dot(simplex[1], direction) < SoftFloat.Zero)
+                        if(SoftVector3.Dot(simplex[1], direction) < SoftFloat.Zero - Tolerance)
                         {
                             // remove a
                             simplex.RemoveAt(0);
@@ -218,25 +219,6 @@ namespace GameLibrary.Physics.SupportMapping
             }
 
             return (false, direction);
-        }
-
-        private readonly struct EvolveResult
-        {
-            public EvolveResult(EvolutionState state, SoftVector3 direction)
-            {
-                State = state;
-                Direction = direction;
-            }
-
-            public EvolutionState State { get; }
-            public SoftVector3 Direction { get; }
-        }
-
-        private enum EvolutionState
-        {
-            NoIntersection,
-            FoundIntersection,
-            StillEvolving
         }
     }
 }

@@ -31,11 +31,11 @@ namespace GameLibrary.Physics.SupportMapping
 
             foreach (var (first, second) in _collidingBodies.DistinctPairs((a, b) => (a, b)))
             {
-                GjkAlgorithm.Result result = GjkAlgorithm.Calculate(first.Collider, second.Collider, _maxGjkIterations);
+                GjkAlgorithm.Result result = default; //GjkAlgorithm.Calculate(first.Collider, second.Collider, _maxGjkIterations);
 
                 if (result.CollisionHappened)
                 {
-                    Collision collision = EpaAlgorithm.Calculate(result.Simplex, first.Collider, second.Collider, _maxEpaIterations);
+                    Collision collision = default;//EpaAlgorithm.Calculate(result.Simplex, first.Collider, second.Collider, _maxEpaIterations);
                     collisionManifolds.Add(new CollisionManifold<TCollidingBody>(first.Concrete, second.Concrete, collision));
                 }
             }

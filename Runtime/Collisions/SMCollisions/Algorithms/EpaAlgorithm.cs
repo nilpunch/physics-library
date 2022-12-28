@@ -7,6 +7,9 @@ namespace GameLibrary.Physics.SupportMapping
 {
     public static class EpaAlgorithm
     {
+        private static SoftFloat Tolerance => (SoftFloat)0.0001f;
+
+
         public static SoftVector3 CalcBarycentric2(SoftVector3 a, SoftVector3 b, SoftVector3 c, SoftVector3 normal, SoftFloat distance, bool clamp = false)
         {
             // Calculate the barycentric coordinates of the origin (0,0,0) projected
@@ -122,7 +125,7 @@ namespace GameLibrary.Physics.SupportMapping
             public int C { get; }
         }
 
-        public static Collision Calculate(List<SoftVector3> simplex, ISMCollider shapeA,
+        public static (Collision collision, List<SoftVector3> polytope, List<PolytopeFace> polytopeFaces) Calculate(List<SoftVector3> simplex, ISMCollider shapeA,
             ISMCollider shapeB, int maxIterations)
         {
             List<SoftVector3> polytope = simplex.ToList();
@@ -138,17 +141,18 @@ namespace GameLibrary.Physics.SupportMapping
 
             (int index, SoftFloat distance, SoftVector3 normal, PolytopeFace face) closestFace = default;
 
+            FixNormals(polytope, polytopeFaces);
+
             while (iteration < maxIterations)
             {
                 iteration += 1;
 
-                FixNormals(polytope, polytopeFaces);
 
                 closestFace = FindClosestFace(polytope, polytopeFaces);
                 SoftVector3 supportPoint = GjkAlgorithm.MinkowskiDifference(shapeA, shapeB, closestFace.normal);
                 SoftFloat distance = SoftVector3.Dot(closestFace.normal, supportPoint);
 
-                if(SoftMath.ApproximatelyEqual(distance, closestFace.distance, (SoftFloat)0.0001f))
+                if(SoftMath.ApproximatelyEqual(distance, closestFace.distance, Tolerance))
                 {
                     break;
                 }
@@ -166,7 +170,7 @@ namespace GameLibrary.Physics.SupportMapping
             SoftVector3 point1 = barycentric.X * polytope[closestFace.face.A] + barycentric.Y * polytope[closestFace.face.B] +
                                 barycentric.Z * polytope[closestFace.face.C];
 
-            return new Collision(true, new ContactPoint[]{ new ContactPoint(point1) }, closestFace.normal, closestFace.distance + (SoftFloat)0.0001);
+            return (new Collision(true, new ContactPoint[]{ new ContactPoint(point1) }, closestFace.normal, closestFace.distance + Tolerance), polytope, polytopeFaces);
         }
 
         public static void ExpandPolytope(List<SoftVector3> polytope, List<PolytopeFace> faces, SoftVector3 extendPoint)
@@ -181,12 +185,12 @@ namespace GameLibrary.Physics.SupportMapping
                 var ac = polytope[face.C] - polytope[face.A];
                 var normal = SoftVector3.Normalize(SoftVector3.Cross(ab, ac));
 
-                if (SoftVector3.Dot(polytope[face.A], normal) < SoftFloat.Zero)
+                if (SoftVector3.Dot(polytope[face.A], normal) < SoftFloat.Zero - Tolerance)
                 {
                     normal = -normal;
                 }
 
-                if (SoftVector3.Dot(normal, extendPoint - polytope[face.A]) > SoftFloat.Zero)
+                if (SoftVector3.Dot(normal, extendPoint - polytope[face.A]) > SoftFloat.Zero + Tolerance)
                 {
                     removalFacesIndices.Add(i);
                 }
@@ -215,9 +219,12 @@ namespace GameLibrary.Physics.SupportMapping
             }
 
             //form new faces with the edges and new point
+            SoftVector3 center = PolytopeCenter(polytope);
             foreach ((int a, int b) in edges)
             {
-                faces.Add(new PolytopeFace(a, b, polytope.Count - 1));
+                var fixedFace = FixFaceNormal(new PolytopeFace(a, b, polytope.Count - 1), polytope, center);
+
+                faces.Add(fixedFace);
             }
         }
 
@@ -237,7 +244,7 @@ namespace GameLibrary.Physics.SupportMapping
                 var normal = SoftVector3.Normalize(SoftVector3.Cross(ab, ac));
                 var distance = SoftVector3.Dot(polytope[face.A], normal);
 
-                if (distance < SoftFloat.Zero)
+                if (distance < SoftFloat.Zero - Tolerance)
                 {
                     normal = -normal;
                     distance = -distance;
@@ -254,25 +261,36 @@ namespace GameLibrary.Physics.SupportMapping
 
         public static void FixNormals(List<SoftVector3> polytope, List<PolytopeFace> faces)
         {
+            SoftVector3 center = PolytopeCenter(polytope);
+
+            for (int i = 0; i < faces.Count; i++)
+            {
+                faces[i] = FixFaceNormal(faces[i], polytope, center);
+            }
+        }
+
+        private static PolytopeFace FixFaceNormal(PolytopeFace face, List<SoftVector3> polytope, SoftVector3 center)
+        {
+            var ab = polytope[face.B] - polytope[face.A];
+            var ac = polytope[face.C] - polytope[face.A];
+
+            var normal = SoftVector3.Normalize(SoftVector3.Cross(ab, ac));
+
+            if (SoftVector3.Dot(-center, normal) < SoftFloat.Zero)
+            {
+                return new PolytopeFace(face.A, face.C, face.B);
+            }
+
+            return face;
+        }
+
+        private static SoftVector3 PolytopeCenter(List<SoftVector3> polytope)
+        {
             SoftVector3 center = SoftVector3.Zero;
             foreach (var vertex in polytope)
                 center += vertex;
             center /= (SoftFloat)polytope.Count;
-
-            for (int i = 0; i < faces.Count; i++)
-            {
-                var face = faces[i];
-
-                var ab = polytope[face.B] - polytope[face.A];
-                var ac = polytope[face.C] - polytope[face.A];
-
-                var normal = SoftVector3.Normalize(SoftVector3.Cross(ab, ac));
-
-                if (SoftVector3.Dot(-center, normal) < SoftFloat.Zero)
-                {
-                    faces[i] = new PolytopeFace(face.A, face.C, face.B);
-                }
-            }
+            return center;
         }
 
         public static void AddOrDeleteEdge(List<(int a, int b)> edges, (int a, int b) edge)
