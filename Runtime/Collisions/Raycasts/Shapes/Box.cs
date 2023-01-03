@@ -1,6 +1,6 @@
 ﻿using GameLibrary.Mathematics;
 
-namespace GameLibrary.Physics.AnalyticColliders
+namespace GameLibrary.Physics.Raycast
 {
     public readonly struct Box
     {

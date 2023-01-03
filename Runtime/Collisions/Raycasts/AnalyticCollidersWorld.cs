@@ -1,22 +1,22 @@
 ﻿using System.Collections.Generic;
 
-namespace GameLibrary.Physics.AnalyticColliders
+namespace GameLibrary.Physics.Raycast
 {
-    public class AnalyticCollidersWorld<TConcrete> : IConcreteCollidersWorld<IAnalyticCollider, TConcrete>, ICollisions<TConcrete>
+    public class AnalyticCollidersWorld<TConcrete> : IConcreteCollidersWorld<IDoubleCastCollider, TConcrete>, ICollisions<TConcrete>
     {
-        private readonly List<ConcreteCollider<IAnalyticCollider, TConcrete>> _collidingBodies;
+        private readonly List<ConcreteCollider<IDoubleCastCollider, TConcrete>> _collidingBodies;
 
         public AnalyticCollidersWorld()
         {
-            _collidingBodies = new List<ConcreteCollider<IAnalyticCollider, TConcrete>>();
+            _collidingBodies = new List<ConcreteCollider<IDoubleCastCollider, TConcrete>>();
         }
 
-        public void Add(ConcreteCollider<IAnalyticCollider, TConcrete> collider)
+        public void Add(ConcreteCollider<IDoubleCastCollider, TConcrete> collider)
         {
             _collidingBodies.Add(collider);
         }
 
-        public void Remove(ConcreteCollider<IAnalyticCollider, TConcrete> collider)
+        public void Remove(ConcreteCollider<IDoubleCastCollider, TConcrete> collider)
         {
             _collidingBodies.Remove(collider);
         }
@@ -27,7 +27,7 @@ namespace GameLibrary.Physics.AnalyticColliders
 
             foreach (var (first, second) in _collidingBodies.DistinctPairs((a, b) => (a, b)))
             {
-                Collision collision = first.Collider.Collide(second.Collider);
+                Collision collision = first.Collider.ColliderCast(second.Collider);
 
                 if (collision.Occure)
                     collisionManifolds.Add(new CollisionManifold<TConcrete>(first.Concrete, second.Concrete, collision));

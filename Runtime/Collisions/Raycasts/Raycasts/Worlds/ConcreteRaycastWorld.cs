@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GameLibrary.Mathematics;
 
-namespace GameLibrary.Physics
+namespace GameLibrary.Physics.Raycast
 {
     public class ConcreteRaycastWorld<TConcrete> : IConcreteRaycastWorld<TConcrete>
     {
