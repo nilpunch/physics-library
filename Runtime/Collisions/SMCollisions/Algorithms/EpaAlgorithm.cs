@@ -147,7 +147,6 @@ namespace GameLibrary.Physics.SupportMapping
             {
                 iteration += 1;
 
-
                 closestFace = FindClosestFace(polytope, polytopeFaces);
                 SoftVector3 supportPoint = GjkAlgorithm.MinkowskiDifference(shapeA, shapeB, closestFace.normal);
                 SoftFloat distance = SoftVector3.Dot(closestFace.normal, supportPoint);
@@ -165,10 +164,14 @@ namespace GameLibrary.Physics.SupportMapping
                 polytope[closestFace.face.A],
                 polytope[closestFace.face.B],
                 polytope[closestFace.face.C],
-                SoftVector3.Zero);
+                closestFace.normal * closestFace.distance);
 
-            SoftVector3 point1 = barycentric.X * polytope[closestFace.face.A] + barycentric.Y * polytope[closestFace.face.B] +
-                                barycentric.Z * polytope[closestFace.face.C];
+            SoftVector3 supportA = shapeA.SupportPoint(polytope[closestFace.face.A]);
+            SoftVector3 supportB = shapeA.SupportPoint(polytope[closestFace.face.B]);
+            SoftVector3 supportC = shapeA.SupportPoint(polytope[closestFace.face.C]);
+
+            SoftVector3 point1 = barycentric.X * supportA + barycentric.Y * supportB +
+                                barycentric.Z * supportC;
 
             return (new Collision(true, new ContactPoint[]{ new ContactPoint(point1) }, closestFace.normal, closestFace.distance + Tolerance), polytope, polytopeFaces);
         }
