@@ -63,7 +63,12 @@ namespace GameLibrary.Physics.Raycast
 
         public Collision Raycast(SoftVector3 @from, SoftVector3 direction)
         {
-            throw new System.NotImplementedException();
+            Collision collision = new Collision();
+
+            foreach (var shell in _collidingShells)
+                collision = collision.Merge(shell.Raycast(from, direction));
+
+            return collision;
         }
     }
 }

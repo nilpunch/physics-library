@@ -9,6 +9,9 @@ namespace GameLibrary.Physics.SupportMapping
     {
         SoftVector3 Centre { get; }
 
+        /// <summary>
+        /// Returns furthest point of object in some direction.
+        /// </summary>
         SoftVector3 SupportPoint(SoftVector3 direction);
     }
 }

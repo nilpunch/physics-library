@@ -6,19 +6,19 @@ namespace GameLibrary.Physics.Raycast
 {
     public class ConcreteRaycastWorld<TConcrete> : IConcreteRaycastWorld<TConcrete>
     {
-        private readonly List<ConcreteCollider<IRaycastCollider, TConcrete>> _colliders;
+        private readonly Dictionary<IRaycastCollider, TConcrete> _colliders;
 
         public ConcreteRaycastWorld()
         {
-            _colliders = new List<ConcreteCollider<IRaycastCollider, TConcrete>>();
+            _colliders = new Dictionary<IRaycastCollider, TConcrete>();
         }
 
-        public void Add(ConcreteCollider<IRaycastCollider, TConcrete> collider)
+        public void Add(IRaycastCollider collider, TConcrete concrete)
         {
-            _colliders.Add(collider);
+            _colliders.Add(collider, concrete);
         }
 
-        public void Remove(ConcreteCollider<IRaycastCollider, TConcrete> collider)
+        public void Remove(IRaycastCollider collider)
         {
             _colliders.Remove(collider);
         }
