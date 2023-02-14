@@ -94,11 +94,11 @@ namespace GameLibrary.Physics.SupportMapping
             return new SoftVector3(alpha, beta, gamma);
         }
 
-        public static SoftVector3 Barycentric(SoftVector3 a, SoftVector3 b, SoftVector3 c, SoftVector3 p)
+        public static SoftVector3 Barycentric(SoftVector3 a, SoftVector3 b, SoftVector3 c, SoftVector3 point, bool clamp = false)
         {
             SoftVector3 v0 = b - a;
             SoftVector3 v1 = c - a;
-            SoftVector3 v2 = p - a;
+            SoftVector3 v2 = point - a;
             SoftFloat d00 = SoftVector3.Dot(v0, v0);
             SoftFloat d01 = SoftVector3.Dot(v0, v1);
             SoftFloat d11 = SoftVector3.Dot(v1, v1);
@@ -108,6 +108,7 @@ namespace GameLibrary.Physics.SupportMapping
             SoftFloat v = (d11 * d20 - d01 * d21) / denominator;
             SoftFloat w = (d00 * d21 - d01 * d20) / denominator;
             SoftFloat u = SoftFloat.One - v - w;
+
             return new SoftVector3(u, v, w);
         }
 
@@ -125,7 +126,7 @@ namespace GameLibrary.Physics.SupportMapping
             public int C { get; }
         }
 
-        public static (Collision collision, List<SoftVector3> polytope, List<PolytopeFace> polytopeFaces) Calculate(List<SoftVector3> simplex, ISMCollider shapeA,
+        public static Collision Calculate(List<SoftVector3> simplex, ISMCollider shapeA,
             ISMCollider shapeB, int maxIterations)
         {
             List<SoftVector3> polytope = simplex.ToList();
@@ -173,7 +174,7 @@ namespace GameLibrary.Physics.SupportMapping
             SoftVector3 point1 = barycentric.X * supportA + barycentric.Y * supportB +
                                 barycentric.Z * supportC;
 
-            return (new Collision(true, new ContactPoint[]{ new ContactPoint(point1) }, closestFace.normal, closestFace.distance + Tolerance), polytope, polytopeFaces);
+            return new Collision(true, new ContactPoint[]{ new ContactPoint(point1) }, closestFace.normal, closestFace.distance + Tolerance);
         }
 
         public static void ExpandPolytope(List<SoftVector3> polytope, List<PolytopeFace> faces, SoftVector3 extendPoint)

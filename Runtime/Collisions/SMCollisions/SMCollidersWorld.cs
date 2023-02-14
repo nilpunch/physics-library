@@ -35,7 +35,7 @@ namespace GameLibrary.Physics.SupportMapping
 
                 if (result.CollisionHappened)
                 {
-                    Collision collision = default;//EpaAlgorithm.Calculate(result.Simplex, first.Collider, second.Collider, _maxEpaIterations);
+                    Collision collision = EpaAlgorithm.Calculate(result.Simplex, first.Key, second.Key, _maxEpaIterations);
                     collisionManifolds.Add(new CollisionManifold<TConcrete>(first.Value, second.Value, collision));
                 }
             }
