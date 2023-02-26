@@ -2,8 +2,11 @@
 
 namespace GameLibrary.Physics
 {
-    public interface IRigidbody : IReadOnlyTransform
+    public interface IRigidbody
     {
         SoftVector3 Velocity { get; set; }
+
+        SoftVector3 Position { get; set; }
+        SoftUnitQuaternion Rotation { get; set; }
     }
 }

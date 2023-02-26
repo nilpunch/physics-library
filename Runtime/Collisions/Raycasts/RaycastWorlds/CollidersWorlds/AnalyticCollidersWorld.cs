@@ -5,18 +5,18 @@ namespace GameLibrary.Physics.Raycast
     /// <summary>
     /// Code reusal.
     /// </summary>
-    public abstract class AnalyticCollidersWorld<TConcrete, TCollider> : IConcreteCollidersWorld<TCollider, TConcrete>, ICollisions<TConcrete>
+    public abstract class AnalyticCollidersWorld<TCollider> : IRigidbodyCollidersWorld<TCollider>, IRigidbodyCollisionsFinder
     {
-        private readonly Dictionary<TCollider, TConcrete> _collidingBodies;
+        private readonly Dictionary<TCollider, IRigidbody> _collidingBodies;
 
         public AnalyticCollidersWorld()
         {
-            _collidingBodies = new Dictionary<TCollider, TConcrete>();
+            _collidingBodies = new Dictionary<TCollider, IRigidbody>();
         }
 
-        public void Add(TCollider collider, TConcrete concrete)
+        public void Add(TCollider collider, IRigidbody rigidbody)
         {
-            _collidingBodies.Add(collider, concrete);
+            _collidingBodies.Add(collider, rigidbody);
         }
 
         public void Remove(TCollider collider)
@@ -24,16 +24,16 @@ namespace GameLibrary.Physics.Raycast
             _collidingBodies.Remove(collider);
         }
 
-        public ICollisionManifold<TConcrete>[] FindCollisions()
+        public CollisionManifold<IRigidbody>[] FindCollisions()
         {
-            List<ICollisionManifold<TConcrete>> collisionManifolds = new List<ICollisionManifold<TConcrete>>();
+            List<CollisionManifold<IRigidbody>> collisionManifolds = new List<CollisionManifold<IRigidbody>>();
 
             foreach (var (first, second) in _collidingBodies.DistinctPairs((a, b) => (a, b)))
             {
                 Collision collision = CalculateCollision(first.Key, second.Key);
 
                 if (collision.Occure)
-                    collisionManifolds.Add(new CollisionManifold<TConcrete>(first.Value, second.Value, collision));
+                    collisionManifolds.Add(new CollisionManifold<IRigidbody>(first.Value, second.Value, collision));
             }
 
             return collisionManifolds.ToArray();

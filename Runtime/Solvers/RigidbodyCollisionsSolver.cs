@@ -1,8 +1,8 @@
 ﻿namespace GameLibrary.Physics.SupportMapping
 {
-    public class RigidbodyCollisionsSolver : ICollisionsSolver<IRigidbody>
+    public class RigidbodyCollisionsSolver : IRigidbodyCollisionsSolver
     {
-        public void Solve(ICollisionManifold<IRigidbody>[] bodiesCollisions, long timeStep)
+        public void Solve(CollisionManifold<IRigidbody>[] bodiesCollisions, long timeStep)
         {
             throw new System.NotImplementedException();
         }

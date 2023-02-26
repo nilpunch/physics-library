@@ -125,7 +125,7 @@ namespace GameLibrary.Physics.SupportMapping
             public int C { get; }
         }
 
-        public static (Collision collision, List<SoftVector3> polytope, List<PolytopeFace> polytopeFaces) Calculate(List<SoftVector3> simplex, ISMCollider shapeA,
+        public static Collision Calculate(List<SoftVector3> simplex, ISMCollider shapeA,
             ISMCollider shapeB, int maxIterations)
         {
             List<SoftVector3> polytope = simplex.ToList();
@@ -173,7 +173,7 @@ namespace GameLibrary.Physics.SupportMapping
             SoftVector3 point1 = barycentric.X * supportA + barycentric.Y * supportB +
                                 barycentric.Z * supportC;
 
-            return (new Collision(true, new ContactPoint[]{ new ContactPoint(point1) }, closestFace.normal, closestFace.distance + Tolerance), polytope, polytopeFaces);
+            return new Collision(true, new ContactPoint[]{ new ContactPoint(point1) }, closestFace.normal, closestFace.distance + Tolerance);
         }
 
         public static void ExpandPolytope(List<SoftVector3> polytope, List<PolytopeFace> faces, SoftVector3 extendPoint)

@@ -1,6 +1,6 @@
 ﻿namespace GameLibrary.Physics.Raycast
 {
-    public class DoubleCastCollidersWorld<TConcrete> : AnalyticCollidersWorld<TConcrete, IDoubleCastCollider>
+    public class DoubleCastCollidersWorld : AnalyticCollidersWorld<IDoubleCastCollider>
     {
         protected override Collision CalculateCollision(IDoubleCastCollider first, IDoubleCastCollider second)
         {
