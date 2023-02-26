@@ -94,11 +94,11 @@ namespace GameLibrary.Physics.SupportMapping
             return new SoftVector3(alpha, beta, gamma);
         }
 
-        public static SoftVector3 Barycentric(SoftVector3 a, SoftVector3 b, SoftVector3 c, SoftVector3 p)
+        public static SoftVector3 Barycentric(SoftVector3 a, SoftVector3 b, SoftVector3 c, SoftVector3 point, bool clamp = false)
         {
             SoftVector3 v0 = b - a;
             SoftVector3 v1 = c - a;
-            SoftVector3 v2 = p - a;
+            SoftVector3 v2 = point - a;
             SoftFloat d00 = SoftVector3.Dot(v0, v0);
             SoftFloat d01 = SoftVector3.Dot(v0, v1);
             SoftFloat d11 = SoftVector3.Dot(v1, v1);
@@ -108,6 +108,7 @@ namespace GameLibrary.Physics.SupportMapping
             SoftFloat v = (d11 * d20 - d01 * d21) / denominator;
             SoftFloat w = (d00 * d21 - d01 * d20) / denominator;
             SoftFloat u = SoftFloat.One - v - w;
+
             return new SoftVector3(u, v, w);
         }
 

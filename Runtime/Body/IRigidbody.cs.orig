@@ -7,9 +7,13 @@ namespace GameLibrary.Physics
         SoftVector3 Velocity { get; set; }
 
         SoftVector3 Position { get; set; }
+<<<<<<< HEAD
         SoftUnitQuaternion Rotation { get; set; }
+=======
+
         SoftFloat Mass { get; set; }
 
         bool IsStatic { get; set; }
+>>>>>>> b55cc1c36a37d6e4013567ad154387963e1428e4
     }
 }
