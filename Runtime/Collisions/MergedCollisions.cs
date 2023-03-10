@@ -11,9 +11,12 @@ namespace GameLibrary.Physics
             _manifoldFinders = manifoldFinders;
         }
 
-        public ICollisionManifold<TBody>[] FindCollisions()
+        public void FindCollisionsNonAlloc(IWriteOnlyContainer<CollisionManifold<TBody>> output)
         {
-            return _manifoldFinders.SelectMany(finder => finder.FindCollisions()).ToArray();
+            foreach (var manifoldFinder in _manifoldFinders)
+            {
+                manifoldFinder.FindCollisionsNonAlloc(output);
+            }
         }
     }
 }

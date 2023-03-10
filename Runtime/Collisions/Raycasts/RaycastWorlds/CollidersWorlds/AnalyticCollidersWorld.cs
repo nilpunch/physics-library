@@ -24,15 +24,15 @@ namespace GameLibrary.Physics.Raycast
             _collidingBodies.Remove(collider);
         }
 
-        public ICollisionManifold<TConcrete>[] FindCollisions()
+        public CollisionManifold<TConcrete>[] FindCollisions()
         {
-            List<ICollisionManifold<TConcrete>> collisionManifolds = new List<ICollisionManifold<TConcrete>>();
+            List<CollisionManifold<TConcrete>> collisionManifolds = new List<CollisionManifold<TConcrete>>();
 
             foreach (var (first, second) in _collidingBodies.DistinctPairs((a, b) => (a, b)))
             {
                 Collision collision = CalculateCollision(first.Key, second.Key);
 
-                if (collision.Occure)
+                // if (collision.Occure)
                     collisionManifolds.Add(new CollisionManifold<TConcrete>(first.Value, second.Value, collision));
             }
 
@@ -40,5 +40,16 @@ namespace GameLibrary.Physics.Raycast
         }
 
         protected abstract Collision CalculateCollision(TCollider first, TCollider second);
+
+        public void FindCollisionsNonAlloc(IWriteOnlyContainer<CollisionManifold<TConcrete>> output)
+        {
+            foreach (var (first, second) in _collidingBodies.DistinctPairs((a, b) => (a, b)))
+            {
+                Collision collision = CalculateCollision(first.Key, second.Key);
+
+                // if (collision.Occure)
+                output.Add(new CollisionManifold<TConcrete>(first.Value, second.Value, collision));
+            }
+        }
     }
 }

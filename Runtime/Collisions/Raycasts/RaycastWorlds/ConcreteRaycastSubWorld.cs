@@ -6,10 +6,10 @@ namespace GameLibrary.Physics.Raycast
 {
     public class ConcreteRaycastSubWorld<TConcrete> : IConcreteRaycastWorld<TConcrete>
     {
-        private readonly IRaycastWorld _parent;
+        private readonly IRaycastWriteOnlyContainer _parent;
         private readonly Dictionary<IRaycastCollider, TConcrete> _localColliders;
 
-        public ConcreteRaycastSubWorld(IRaycastWorld parent)
+        public ConcreteRaycastSubWorld(IRaycastWriteOnlyContainer parent)
         {
             _parent = parent;
             _localColliders = new Dictionary<IRaycastCollider, TConcrete>();

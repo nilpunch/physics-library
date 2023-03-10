@@ -135,6 +135,17 @@ namespace GameLibrary.Physics
             }
         }
 
+        public static IEnumerable<TResult> DistinctPairs<TSource, TResult>(this IReadOnlyList<TSource> source, Func<TSource, TSource, TResult> resultSelector)
+        {
+            for (int i = 0; i < source.Count - 1; i++)
+            {
+                for (int j = i + 1; j < source.Count; j++)
+                {
+                    yield return resultSelector(source[i], source[j]);
+                }
+            }
+        }
+
         public static T GetMin<T>(this IEnumerable<T> items, Func<T, float> action)
         {
             if (items == null)

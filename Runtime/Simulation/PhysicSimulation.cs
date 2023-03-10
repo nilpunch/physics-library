@@ -1,27 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GameLibrary.Mathematics;
-using GameLibrary.Physics.SupportMapping;
-
+﻿using GameLibrary.Mathematics;
 
 namespace GameLibrary.Physics
 {
-    public class PhysicSimulation<TBody> : ISimulate
+    public class PhysicSimulation : IPhysicSimulation
     {
-        private readonly ICollisions<TBody> _collisions;
-        private readonly ICollisionsSolver<TBody> _solver;
+        private readonly IPhysicSimulationStep[] _physicSimulationSteps;
+        private readonly int _substeps;
 
-        public PhysicSimulation(ICollisions<TBody> collisions, ICollisionsSolver<TBody> solver)
+        public PhysicSimulation(IPhysicSimulationStep[] physicSimulationSteps, int substeps = 4)
         {
-            _collisions = collisions;
-            _solver = solver;
+            _physicSimulationSteps = physicSimulationSteps;
+            _substeps = substeps;
         }
 
-        public void Step(long stepMilliseconds)
+        public void Step(SoftFloat deltaTime)
         {
-            ICollisionManifold<TBody>[] collisionManifolds = _collisions.FindCollisions();
-            _solver.Solve(collisionManifolds, stepMilliseconds);
+            SoftFloat subStepDeltaTime = deltaTime / (SoftFloat)_substeps;
+
+            for (int substep = 0; substep < _substeps; ++substep)
+            {
+                foreach (var physicSimulationStep in _physicSimulationSteps)
+                {
+                    physicSimulationStep.Step(subStepDeltaTime);
+                }
+            }
         }
     }
 }

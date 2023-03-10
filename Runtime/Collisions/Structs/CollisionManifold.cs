@@ -2,7 +2,7 @@
 
 namespace GameLibrary.Physics
 {
-    public readonly struct CollisionManifold<TBody> : ICollisionManifold<TBody>
+    public readonly struct CollisionManifold<TBody>
     {
         public CollisionManifold(TBody first, TBody second, Collision collision)
         {

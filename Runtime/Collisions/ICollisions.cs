@@ -1,7 +1,7 @@
 ﻿namespace GameLibrary.Physics
 {
-    public interface ICollisions<out TBody>
+    public interface ICollisions<TBody>
     {
-        ICollisionManifold<TBody>[] FindCollisions();
+        void FindCollisionsNonAlloc(IWriteOnlyContainer<CollisionManifold<TBody>> output);
     }
 }

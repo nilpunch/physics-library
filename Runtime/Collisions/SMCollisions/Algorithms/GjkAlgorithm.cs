@@ -9,9 +9,11 @@ namespace GameLibrary.Physics.SupportMapping
     {
         private static SoftFloat Tolerance => (SoftFloat)0.0001f;
 
+        private static List<SoftVector3> SimplexShared { get; } = new List<SoftVector3>(4);
+
         public struct Result
         {
-            public Result(bool collisionHappened, List<SoftVector3> simplex, int iterations, SoftVector3 direction)
+            public Result(bool collisionHappened, IReadOnlyList<SoftVector3> simplex, int iterations, SoftVector3 direction)
             {
                 CollisionHappened = collisionHappened;
                 Simplex = simplex;
@@ -20,7 +22,7 @@ namespace GameLibrary.Physics.SupportMapping
             }
 
             public bool CollisionHappened { get; }
-            public List<SoftVector3> Simplex { get; }
+            public IReadOnlyList<SoftVector3> Simplex { get; }
 
             public int Iterations { get; }
             public SoftVector3 Direction { get; }
@@ -28,7 +30,8 @@ namespace GameLibrary.Physics.SupportMapping
 
         public static Result Calculate(ISMCollider shapeA, ISMCollider shapeB, int maxIterations)
         {
-            List<SoftVector3> simplex = new List<SoftVector3>();
+            SimplexShared.Clear();
+            List<SoftVector3> simplex = SimplexShared;
 
             SoftVector3 direction = SoftVector3.NormalizeSafe(shapeB.Centre - shapeA.Centre, SoftVector3.Up);
 

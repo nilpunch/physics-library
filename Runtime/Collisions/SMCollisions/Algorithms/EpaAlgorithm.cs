@@ -9,6 +9,10 @@ namespace GameLibrary.Physics.SupportMapping
     {
         private static SoftFloat Tolerance => (SoftFloat)0.0001f;
 
+        private static List<SoftVector3> PolytopeShared { get; } = new List<SoftVector3>();
+        private static List<PolytopeFace> PolytopeFacesShared { get; } = new List<PolytopeFace>();
+        private static List<int> RemovalFacesIndicesShared { get; } = new List<int>();
+        private static List<(int a, int b)> RemovalEdgesShared { get; } = new List<(int a, int b)>();
 
         public static SoftVector3 CalcBarycentric2(SoftVector3 a, SoftVector3 b, SoftVector3 c, SoftVector3 normal, SoftFloat distance, bool clamp = false)
         {
@@ -126,17 +130,20 @@ namespace GameLibrary.Physics.SupportMapping
             public int C { get; }
         }
 
-        public static Collision Calculate(List<SoftVector3> simplex, ISMCollider shapeA,
+        public static Collision Calculate(IReadOnlyList<SoftVector3> simplex, ISMCollider shapeA,
             ISMCollider shapeB, int maxIterations)
         {
-            List<SoftVector3> polytope = simplex.ToList();
-            List<PolytopeFace> polytopeFaces = new List<PolytopeFace>
-            {
-                new PolytopeFace(0, 1, 2),
-                new PolytopeFace(0, 1, 3),
-                new PolytopeFace(0, 2, 3),
-                new PolytopeFace(1, 2, 3)
-            };
+            PolytopeShared.Clear();
+            PolytopeFacesShared.Clear();
+
+            List<SoftVector3> polytope = PolytopeShared;
+            polytope.AddRange(simplex);
+
+            List<PolytopeFace> polytopeFaces = PolytopeFacesShared;
+            polytopeFaces.Add(new PolytopeFace(0, 1, 2));
+            polytopeFaces.Add(new PolytopeFace(0, 1, 3));
+            polytopeFaces.Add(new PolytopeFace(0, 2, 3));
+            polytopeFaces.Add(new PolytopeFace(1, 2, 3));
 
             int iteration = 0;
 
@@ -174,12 +181,13 @@ namespace GameLibrary.Physics.SupportMapping
             SoftVector3 point1 = barycentric.X * supportA + barycentric.Y * supportB +
                                 barycentric.Z * supportC;
 
-            return new Collision(true, new ContactPoint[]{ new ContactPoint(point1) }, closestFace.normal, closestFace.distance + Tolerance);
+            return new Collision(new ContactPoint(point1), closestFace.normal, closestFace.distance + Tolerance);
         }
 
         public static void ExpandPolytope(List<SoftVector3> polytope, List<PolytopeFace> faces, SoftVector3 extendPoint)
         {
-            var removalFacesIndices = new List<int>();
+            RemovalFacesIndicesShared.Clear();
+            var removalFacesIndices = RemovalFacesIndicesShared;
 
             for (int i = 0; i < faces.Count; i++)
             {
@@ -203,7 +211,8 @@ namespace GameLibrary.Physics.SupportMapping
 
 
             // get the edges that are not shared between the faces that should be removed
-            var edges = new List<(int a, int b)>();
+            RemovalEdgesShared.Clear();
+            var edges = RemovalEdgesShared;
             foreach (int removalFaceIndex in removalFacesIndices)
             {
                 var face = faces[removalFaceIndex];
@@ -217,8 +226,9 @@ namespace GameLibrary.Physics.SupportMapping
             }
 
             //remove the faces from the polytope
-            foreach (int index in Enumerable.Reverse(removalFacesIndices))
+            for (int i = removalFacesIndices.Count - 1; i >= 0; i--)
             {
+                int index = removalFacesIndices[i];
                 faces.RemoveAt(index);
             }
 
@@ -299,7 +309,18 @@ namespace GameLibrary.Physics.SupportMapping
 
         public static void AddOrDeleteEdge(List<(int a, int b)> edges, (int a, int b) edge)
         {
-            int edgeIndex = edges.FindIndex(pair => pair.a == edge.a && pair.b == edge.b || pair.a == edge.b && pair.b == edge.a);
+            int edgeIndex = -1;
+
+            for (int index = 0; index < edges.Count; index++)
+            {
+                (int a, int b) pair = edges[index];
+
+                if (pair.a == edge.a && pair.b == edge.b || pair.a == edge.b && pair.b == edge.a)
+                {
+                    edgeIndex = index;
+                    break;
+                }
+            }
 
             if (edgeIndex != -1)
             {
