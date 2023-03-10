@@ -3,18 +3,18 @@ using GameLibrary.Physics.SupportMapping;
 
 namespace GameLibrary.Physics
 {
-    public class MultiverseCollidersWorld : IRigidbodyCollidersWorld<IMultiverseCollider>
+    public class MultiverseCollidersWorld<TCollidingBody> : IConcreteCollidersWorld<IMultiverseCollider, TCollidingBody>
     {
-        private readonly IRigidbodyCollidersWorld<ISMCollider> _smCollidersWorld;
-        private readonly IRigidbodyCollidersWorld<IRaycastCollider> _raycastCollidersWorld;
+        private readonly IConcreteCollidersWorld<ISMCollider, TCollidingBody> _smCollidersWorld;
+        private readonly IConcreteCollidersWorld<IRaycastCollider, TCollidingBody> _raycastCollidersWorld;
 
-        public MultiverseCollidersWorld(IRigidbodyCollidersWorld<ISMCollider> smCollidersWorld, IRigidbodyCollidersWorld<IRaycastCollider> raycastCollidersWorld)
+        public MultiverseCollidersWorld(IConcreteCollidersWorld<ISMCollider, TCollidingBody> smCollidersWorld, IConcreteCollidersWorld<IRaycastCollider, TCollidingBody> raycastCollidersWorld)
         {
             _smCollidersWorld = smCollidersWorld;
             _raycastCollidersWorld = raycastCollidersWorld;
         }
 
-        public void Add(IMultiverseCollider collider, IRigidbody concrete)
+        public void Add(IMultiverseCollider collider, TCollidingBody concrete)
         {
             _smCollidersWorld.Add(collider, concrete);
             _raycastCollidersWorld.Add(collider, concrete);

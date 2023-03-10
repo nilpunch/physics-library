@@ -2,15 +2,15 @@
 
 namespace GameLibrary.Physics.Raycast
 {
-    public class RigidbodyCollider : IDoubleCastCollider
+    public class DynamicCollider : IDoubleCastCollider
     {
         private readonly IDoubleCastCollider _collider;
-        private readonly IRigidbody _rigidbody;
+        private readonly IReadOnlyTransform _transform;
 
-        public RigidbodyCollider(IRigidbody rigidbody, IDoubleCastCollider collider)
+        public DynamicCollider(IReadOnlyTransform transform, IDoubleCastCollider collider)
         {
             _collider = collider;
-            _rigidbody = rigidbody;
+            _transform = transform;
         }
 
         public Collision BoxCast(Box box)

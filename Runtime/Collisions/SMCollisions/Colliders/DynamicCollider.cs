@@ -6,28 +6,28 @@ namespace GameLibrary.Physics.SupportMapping
     public class DynamicCollider : ISMCollider
     {
         private readonly ISMCollider _collider;
-        private readonly IRigidbody _rigidbody;
+        private readonly IReadOnlyTransform _readOnlyTransform;
 
-        public DynamicCollider(IRigidbody rigidbody, ISMCollider collider)
+        public DynamicCollider(IReadOnlyTransform readOnlyTransform, ISMCollider collider)
         {
             _collider = collider;
-            _rigidbody = rigidbody;
+            _readOnlyTransform = readOnlyTransform;
         }
 
         public SoftVector3 Centre
         {
             get
             {
-                var transformedCentre = _rigidbody.Rotation * _collider.Centre + _rigidbody.Position;
+                var transformedCentre = _readOnlyTransform.Rotation * _collider.Centre + _readOnlyTransform.Position;
                 return transformedCentre;
             }
         }
 
         public SoftVector3 SupportPoint(SoftVector3 direction)
         {
-            SoftVector3 rotatedDirection = SoftUnitQuaternion.Inverse(_rigidbody.Rotation) * direction;
+            SoftVector3 rotatedDirection = SoftUnitQuaternion.Inverse(_readOnlyTransform.Rotation) * direction;
             var supportPoint = _collider.SupportPoint(rotatedDirection);
-            var transformedSupportPoint = _rigidbody.Rotation * supportPoint + _rigidbody.Position;
+            var transformedSupportPoint = _readOnlyTransform.Rotation * supportPoint + _readOnlyTransform.Position;
             return transformedSupportPoint;
         }
     }

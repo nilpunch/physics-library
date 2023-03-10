@@ -2,22 +2,22 @@
 
 namespace GameLibrary.Physics.SupportMapping
 {
-    public class SMCollidersWorld : IRigidbodyCollidersWorld<ISMCollider>, IRigidbodyCollisionsFinder
+    public class SMCollidersWorld<TConcrete> : IConcreteCollidersWorld<ISMCollider, TConcrete>, ICollisions<TConcrete>
     {
         private readonly int _maxGjkIterations;
         private readonly int _maxEpaIterations;
-        private readonly Dictionary<ISMCollider, IRigidbody> _collidingBodies;
+        private readonly Dictionary<ISMCollider, TConcrete> _collidingBodies;
 
         public SMCollidersWorld(int maxGjkIterations, int maxEpaIterations)
         {
             _maxGjkIterations = maxGjkIterations;
             _maxEpaIterations = maxEpaIterations;
-            _collidingBodies = new Dictionary<ISMCollider, IRigidbody>();
+            _collidingBodies = new Dictionary<ISMCollider, TConcrete>();
         }
 
-        public void Add(ISMCollider collider, IRigidbody rigidbody)
+        public void Add(ISMCollider collider, TConcrete concrete)
         {
-            _collidingBodies.Add(collider, rigidbody);
+            _collidingBodies.Add(collider, concrete);
         }
 
         public void Remove(ISMCollider collider)
@@ -25,9 +25,9 @@ namespace GameLibrary.Physics.SupportMapping
             _collidingBodies.Remove(collider);
         }
 
-        public CollisionManifold<IRigidbody>[] FindCollisions()
+        public ICollisionManifold<TConcrete>[] FindCollisions()
         {
-            List<CollisionManifold<IRigidbody>> collisionManifolds = new List<CollisionManifold<IRigidbody>>();
+            List<ICollisionManifold<TConcrete>> collisionManifolds = new List<ICollisionManifold<TConcrete>>();
 
             foreach (var (first, second) in _collidingBodies.DistinctPairs((a, b) => (a, b)))
             {
@@ -35,8 +35,8 @@ namespace GameLibrary.Physics.SupportMapping
 
                 if (result.CollisionHappened)
                 {
-                    Collision collision = EpaAlgorithm.Calculate(result.Simplex, first.Key, second.Key, _maxEpaIterations);
-                    collisionManifolds.Add(new CollisionManifold<IRigidbody>(first.Value, second.Value, collision));
+                    Collision collision = default;//EpaAlgorithm.Calculate(result.Simplex, first.Collider, second.Collider, _maxEpaIterations);
+                    collisionManifolds.Add(new CollisionManifold<TConcrete>(first.Value, second.Value, collision));
                 }
             }
 
