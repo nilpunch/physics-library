@@ -9,8 +9,8 @@ namespace GameLibrary.Physics.SupportMapping
     {
         private static SoftFloat Tolerance => (SoftFloat)0.0001f;
 
-        private static List<SoftVector3> PolytopeShared { get; } = new List<SoftVector3>();
-        private static List<PolytopeFace> PolytopeFacesShared { get; } = new List<PolytopeFace>();
+        public static List<SoftVector3> PolytopeShared { get; } = new List<SoftVector3>();
+        public static List<PolytopeFace> PolytopeFacesShared { get; } = new List<PolytopeFace>();
         private static List<int> RemovalFacesIndicesShared { get; } = new List<int>();
         private static List<(int a, int b)> RemovalEdgesShared { get; } = new List<(int a, int b)>();
 
@@ -181,7 +181,7 @@ namespace GameLibrary.Physics.SupportMapping
             SoftVector3 point1 = barycentric.X * supportA + barycentric.Y * supportB +
                                 barycentric.Z * supportC;
 
-            return new Collision(new ContactPoint(point1), closestFace.normal, closestFace.distance + Tolerance);
+            return new Collision(new ContactPoint(shapeA.SupportPoint(closestFace.normal)), new ContactPoint(shapeB.SupportPoint(-closestFace.normal)), closestFace.normal, closestFace.distance + Tolerance);
         }
 
         public static void ExpandPolytope(List<SoftVector3> polytope, List<PolytopeFace> faces, SoftVector3 extendPoint)

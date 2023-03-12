@@ -4,7 +4,7 @@ namespace GameLibrary.Physics
 {
     public interface IReadOnlyTransform
     {
-        SoftVector3 Position { get; }
-        SoftUnitQuaternion Rotation { get; }
+        SoftVector3 Position { get; set; }
+        SoftUnitQuaternion Rotation { get; set; }
     }
 }

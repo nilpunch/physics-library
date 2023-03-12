@@ -5,17 +5,20 @@ namespace GameLibrary.Physics
 {
     public readonly struct Collision
     {
-        public ContactPoint Contact { get; }
+        public ContactPoint ContactFirst { get; }
+
+        public ContactPoint ContactSecond { get; }
 
         public SoftVector3 PenetrationNormal { get; }
 
         public SoftFloat PenetrationDepth { get; }
 
-        public Collision(ContactPoint contact, SoftVector3 penetrationNormal, SoftFloat penetrationDepth)
+        public Collision(ContactPoint contactFirst, ContactPoint contactSecond, SoftVector3 penetrationNormal, SoftFloat penetrationDepth)
         {
-            Contact = contact;
+            ContactFirst = contactFirst;
             PenetrationNormal = penetrationNormal;
             PenetrationDepth = penetrationDepth;
+            ContactSecond = contactSecond;
         }
 
         public Collision Merge(Collision other)

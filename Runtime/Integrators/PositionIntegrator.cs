@@ -20,12 +20,7 @@ namespace GameLibrary.Physics
                 SoftVector3 angularVelocity = rigidbody.AngularVelocity;
 
                 SoftFloat halfDeltaTime = deltaTime * (SoftFloat)0.5f;
-                rigidbody.Rotation = new SoftUnitQuaternion(
-                                         angularVelocity.X * halfDeltaTime,
-                                         angularVelocity.Y * halfDeltaTime,
-                                         angularVelocity.Z * halfDeltaTime,
-                                         SoftFloat.One)
-                                     * rigidbody.Rotation;
+                rigidbody.Rotation = SoftUnitQuaternion.EulerRadians(angularVelocity * deltaTime) * rigidbody.Rotation;
             }
         }
     }
