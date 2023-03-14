@@ -5,15 +5,38 @@ using GameLibrary.Mathematics;
 
 namespace GameLibrary.Physics.SupportMapping
 {
+    public struct MinkowskiDifference
+    {
+        public MinkowskiDifference(SoftVector3 supportA, SoftVector3 supportB, SoftVector3 difference)
+        {
+            SupportA = supportA;
+            SupportB = supportB;
+            Difference = difference;
+        }
+
+        public SoftVector3 SupportA { get; }
+        public SoftVector3 SupportB { get; }
+        public SoftVector3 Difference { get; }
+
+        public static MinkowskiDifference Calculate(ISMCollider shapeA, ISMCollider shapeB, SoftVector3 direction)
+        {
+            SoftVector3 supportA = shapeA.SupportPoint(direction);
+            SoftVector3 supportB = shapeB.SupportPoint(-direction);
+            SoftVector3 difference = supportA - supportB;
+
+            return new MinkowskiDifference(supportA, supportB, difference);
+        }
+    }
+
     public static class GjkAlgorithm
     {
         private static SoftFloat Tolerance => (SoftFloat)0.0001f;
 
-        private static List<SoftVector3> SimplexShared { get; } = new List<SoftVector3>(4);
+        private static List<MinkowskiDifference> SimplexShared { get; } = new List<MinkowskiDifference>(4);
 
         public struct Result
         {
-            public Result(bool collisionHappened, IReadOnlyList<SoftVector3> simplex, int iterations, SoftVector3 direction)
+            public Result(bool collisionHappened, IReadOnlyList<MinkowskiDifference> simplex, int iterations, SoftVector3 direction)
             {
                 CollisionHappened = collisionHappened;
                 Simplex = simplex;
@@ -22,7 +45,7 @@ namespace GameLibrary.Physics.SupportMapping
             }
 
             public bool CollisionHappened { get; }
-            public IReadOnlyList<SoftVector3> Simplex { get; }
+            public IReadOnlyList<MinkowskiDifference> Simplex { get; }
 
             public int Iterations { get; }
             public SoftVector3 Direction { get; }
@@ -31,7 +54,7 @@ namespace GameLibrary.Physics.SupportMapping
         public static Result Calculate(ISMCollider shapeA, ISMCollider shapeB, int maxIterations)
         {
             SimplexShared.Clear();
-            List<SoftVector3> simplex = SimplexShared;
+            var simplex = SimplexShared;
 
             SoftVector3 direction = SoftVector3.NormalizeSafe(shapeB.Centre - shapeA.Centre, SoftVector3.Up);
 
@@ -41,10 +64,10 @@ namespace GameLibrary.Physics.SupportMapping
             {
                 iterations++;
 
-                SoftVector3 supportPoint = MinkowskiDifference(shapeA, shapeB, direction);
+                MinkowskiDifference supportPoint = MinkowskiDifference.Calculate(shapeA, shapeB, direction);
                 simplex.Add(supportPoint);
 
-                if(SoftVector3.Dot(supportPoint, direction) <= SoftFloat.Zero)
+                if(SoftVector3.Dot(supportPoint.Difference, direction) <= SoftFloat.Zero)
                 {
                     break;
                 }
@@ -62,11 +85,6 @@ namespace GameLibrary.Physics.SupportMapping
             return new Result(colliding, simplex, iterations, direction);
         }
 
-        public static SoftVector3 MinkowskiDifference(ISMCollider shapeA, ISMCollider shapeB, SoftVector3 direction)
-        {
-            return shapeA.SupportPoint(direction) - shapeB.SupportPoint(-direction);
-        }
-
         private static SoftVector3 TripleProduct(SoftVector3 a, SoftVector3 b, SoftVector3 c)
         {
             return SoftVector3.Cross(SoftVector3.Cross(a, b), c);
@@ -82,7 +100,7 @@ namespace GameLibrary.Physics.SupportMapping
             return cross;
         }
 
-        private static (bool encloseOrigin, SoftVector3 nextDirection) TryEncloseOrigin(List<SoftVector3> simplex,
+        private static (bool encloseOrigin, SoftVector3 nextDirection) TryEncloseOrigin(List<MinkowskiDifference> simplex,
             ISMCollider shapeA, ISMCollider shapeB, SoftVector3 direction)
         {
             switch (simplex.Count)
@@ -101,9 +119,9 @@ namespace GameLibrary.Physics.SupportMapping
                 case 2:
                     {
                         // line ab is the line formed by the first two vertices
-                        SoftVector3 ab = simplex[1] - simplex[0];
+                        SoftVector3 ab = simplex[1].Difference - simplex[0].Difference;
                         // line a0 is the line from the first vertex to the origin
-                        SoftVector3 a0 = -simplex[0];
+                        SoftVector3 a0 = -simplex[0].Difference;
 
                         if (SoftVector3.ApproximatelyEqual(SoftVector3.Cross(ab, a0), SoftVector3.Zero))
                             direction = SoftVector3.Orthogonal(ab);
@@ -115,12 +133,12 @@ namespace GameLibrary.Physics.SupportMapping
                     }
                 case 3:
                     {
-                        SoftVector3 ab = simplex[1] - simplex[0];
-                        SoftVector3 ac = simplex[2] - simplex[0];
+                        SoftVector3 ab = simplex[1].Difference - simplex[0].Difference;
+                        SoftVector3 ac = simplex[2].Difference - simplex[0].Difference;
                         direction = SoftVector3.Cross(ab, ac);
 
                         // ensure it points toward the origin
-                        SoftVector3 a0 = -simplex[0];
+                        SoftVector3 a0 = -simplex[0].Difference;
                         if (SoftVector3.Dot(direction, a0) < SoftFloat.Zero)
                             direction = -direction;
                         break;
@@ -153,12 +171,12 @@ namespace GameLibrary.Physics.SupportMapping
                         //
 
                         // calculate edges of interest
-                        SoftVector3 ab = simplex[1] - simplex[0];
-                        SoftVector3 ac = simplex[2] - simplex[0];
-                        SoftVector3 ad = simplex[3] - simplex[0];
+                        SoftVector3 ab = simplex[1].Difference - simplex[0].Difference;
+                        SoftVector3 ac = simplex[2].Difference - simplex[0].Difference;
+                        SoftVector3 ad = simplex[3].Difference - simplex[0].Difference;
 
-                        SoftVector3 bc = simplex[2] - simplex[1];
-                        SoftVector3 bd = simplex[3] - simplex[1];
+                        SoftVector3 bc = simplex[2].Difference - simplex[1].Difference;
+                        SoftVector3 bd = simplex[3].Difference - simplex[1].Difference;
                         SoftVector3 ba = -ab;
 
                         // ABC
@@ -167,7 +185,7 @@ namespace GameLibrary.Physics.SupportMapping
                         {
                             direction = -direction;
                         }
-                        if(SoftVector3.Dot(simplex[0], direction) < SoftFloat.Zero - Tolerance)
+                        if(SoftVector3.Dot(simplex[0].Difference, direction) < SoftFloat.Zero - Tolerance)
                         {
                             // remove d
                             simplex.RemoveAt(3);
@@ -180,7 +198,7 @@ namespace GameLibrary.Physics.SupportMapping
                         {
                             direction = -direction;
                         }
-                        if(SoftVector3.Dot(simplex[0], direction) < SoftFloat.Zero - Tolerance)
+                        if(SoftVector3.Dot(simplex[0].Difference, direction) < SoftFloat.Zero - Tolerance)
                         {
                             // remove c
                             simplex.RemoveAt(2);
@@ -193,7 +211,7 @@ namespace GameLibrary.Physics.SupportMapping
                         {
                             direction = -direction;
                         }
-                        if(SoftVector3.Dot(simplex[0], direction) < SoftFloat.Zero - Tolerance)
+                        if(SoftVector3.Dot(simplex[0].Difference, direction) < SoftFloat.Zero - Tolerance)
                         {
                             // remove b
                             simplex.RemoveAt(1);
@@ -206,7 +224,7 @@ namespace GameLibrary.Physics.SupportMapping
                         {
                             direction = -direction;
                         }
-                        if(SoftVector3.Dot(simplex[1], direction) < SoftFloat.Zero - Tolerance)
+                        if(SoftVector3.Dot(simplex[1].Difference, direction) < SoftFloat.Zero - Tolerance)
                         {
                             // remove a
                             simplex.RemoveAt(0);
