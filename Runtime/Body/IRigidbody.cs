@@ -29,9 +29,9 @@ namespace GameLibrary.Physics
 
         SoftFloat ContactBeta => (SoftFloat)0.7f;
 
-        SoftFloat Restitution => (SoftFloat)0.1f;
+        SoftFloat Restitution => (SoftFloat)0.0f;
 
-        SoftFloat Friction => (SoftFloat)0.9f;
+        SoftFloat Friction => (SoftFloat)1f;
 
         Matrix3x3 InertiaTensor
         {

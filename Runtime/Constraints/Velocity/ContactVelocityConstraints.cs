@@ -20,6 +20,9 @@ namespace GameLibrary.Physics
 
             foreach (CollisionManifold<IRigidbody> collisionManifold in _collisionsBuffer.Items)
             {
+                if (collisionManifold.First.IsStatic && collisionManifold.Second.IsStatic)
+                    continue;
+
                 var collisionResolution = new CollisionResolutionJacobian(collisionManifold);
 
                 collisionResolution.Resolve(deltaTime);
