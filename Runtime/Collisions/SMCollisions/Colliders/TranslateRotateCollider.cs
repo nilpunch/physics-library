@@ -1,24 +1,24 @@
-﻿using System;
-using GameLibrary.Mathematics;
+﻿using GameLibrary.Mathematics;
+using PluggableMath;
 
 namespace GameLibrary.Physics.SupportMapping
 {
-    public class TranslateRotateCollider : ISMCollider
+    public class TranslateRotateCollider<TNumber> : ISMCollider<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly ISMCollider _collider;
-        private readonly SoftUnitQuaternion _rotation;
-        private readonly SoftVector3 _translation;
+        private readonly ISMCollider<TNumber> _collider;
+        private readonly UnitQuaternion<TNumber> _rotation;
+        private readonly Vector3<TNumber> _translation;
 
-        public TranslateRotateCollider(ISMCollider collider,
-            SoftUnitQuaternion rotation,
-            SoftVector3 translation)
+        public TranslateRotateCollider(ISMCollider<TNumber> collider,
+            UnitQuaternion<TNumber> rotation,
+            Vector3<TNumber> translation)
         {
             _collider = collider;
             _rotation = rotation;
             _translation = translation;
         }
 
-        public SoftVector3 Centre
+        public Vector3<TNumber> Centre
         {
             get
             {
@@ -27,9 +27,9 @@ namespace GameLibrary.Physics.SupportMapping
             }
         }
 
-        public SoftVector3 SupportPoint(SoftVector3 direction)
+        public Vector3<TNumber> SupportPoint(Vector3<TNumber> direction)
         {
-            SoftVector3 rotatedDirection = SoftUnitQuaternion.Inverse(_rotation) * direction;
+            Vector3<TNumber> rotatedDirection = UnitQuaternion<TNumber>.Inverse(_rotation) * direction;
             var supportPoint = _collider.SupportPoint(rotatedDirection);
             var transformedSupportPoint = _rotation * supportPoint + _translation;
             return transformedSupportPoint;

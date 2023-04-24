@@ -1,10 +1,10 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics.Raycast
 {
-    public struct Mesh
+    public struct Mesh<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        public readonly SoftVector3[] Vertices;
+        public readonly Vector3<TNumber>[] Vertices;
         public readonly int[] Indices;
     }
 }

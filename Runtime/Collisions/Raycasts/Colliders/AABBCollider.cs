@@ -1,42 +1,42 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics.Raycast
 {
-	public class AABBCollider : IDoubleCastCollider
+	public class AABBCollider<TNumber> : IDoubleCastCollider<TNumber> where TNumber : struct, INumber<TNumber>
 	{
-		private readonly AABB _aabb;
+		private readonly AABB<TNumber> _aabb;
 
-		public AABBCollider(AABB aabb)
+		public AABBCollider(AABB<TNumber> aabb)
 		{
 			_aabb = aabb;
 		}
 
-		public Collision ColliderCast(IRaycastCollider raycastCollider)
+		public Collision<TNumber> ColliderCast(IRaycastCollider<TNumber> raycastCollider)
 		{
 			return raycastCollider.AABBCast(_aabb);
 		}
 
-		public Collision BoxCast(Box box)
+		public Collision<TNumber> BoxCast(Box<TNumber> box)
 		{
-			return AnalyticCollisionsLibrary.AABBAgainstBox(_aabb, box);
+			return AnalyticCollisionsLibrary<TNumber>.AABBAgainstBox(_aabb, box);
 		}
 
-		public Collision SphereCast(Sphere sphere)
+		public Collision<TNumber> SphereCast(Sphere<TNumber> sphere)
 		{
-			return AnalyticCollisionsLibrary.AABBAgainstSphere(_aabb, sphere);
+			return AnalyticCollisionsLibrary<TNumber>.AABBAgainstSphere(_aabb, sphere);
 		}
 
-		public Collision ConvexHullCast(ConvexHull convexHull)
+		public Collision<TNumber> ConvexHullCast(ConvexHull<TNumber> convexHull)
 		{
-			return AnalyticCollisionsLibrary.AABBAgainstConvexHull(_aabb, convexHull);
+			return AnalyticCollisionsLibrary<TNumber>.AABBAgainstConvexHull(_aabb, convexHull);
 		}
 
-		public Collision AABBCast(AABB aabb)
+		public Collision<TNumber> AABBCast(AABB<TNumber> aabb)
 		{
-			return AnalyticCollisionsLibrary.AABBAgainstAABB(_aabb, aabb);
+			return AnalyticCollisionsLibrary<TNumber>.AABBAgainstAABB(_aabb, aabb);
 		}
 
-        public Collision Raycast(SoftVector3 @from, SoftVector3 direction)
+        public Collision<TNumber> Raycast(Vector3<TNumber> @from, Vector3<TNumber> direction)
         {
             throw new System.NotImplementedException();
         }

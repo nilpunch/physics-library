@@ -1,17 +1,17 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics
 {
-    public class ConstraintSimulationStep : IPhysicSimulationStep
+    public class ConstraintSimulationStep<TNumber> : IPhysicSimulationStep<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly IConstraint _constraint;
+        private readonly IConstraint<TNumber> _constraint;
 
-        public ConstraintSimulationStep(IConstraint constraint)
+        public ConstraintSimulationStep(IConstraint<TNumber> constraint)
         {
             _constraint = constraint;
         }
-        
-        public void Step(SoftFloat deltaTime)
+
+        public void Step(Operand<TNumber> deltaTime)
         {
             _constraint.Solve(deltaTime);
         }

@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using PluggableMath;
 
 namespace GameLibrary.Physics.Raycast
 {
     /// <summary>
     /// Code reusal.
     /// </summary>
-    public abstract class AnalyticCollidersWorld<TConcrete, TCollider> : IConcreteCollidersWorld<TCollider, TConcrete>, ICollisions<TConcrete>
+    public abstract class AnalyticCollidersWorld<TNumber, TConcrete, TCollider> : IConcreteCollidersWorld<TCollider, TConcrete>, ICollisions<TNumber, TConcrete> where TNumber : struct, INumber<TNumber>
     {
         private readonly Dictionary<TCollider, TConcrete> _collidingBodies;
 
@@ -24,31 +25,31 @@ namespace GameLibrary.Physics.Raycast
             _collidingBodies.Remove(collider);
         }
 
-        public CollisionManifold<TConcrete>[] FindCollisions()
+        public CollisionManifold<TNumber, TConcrete>[] FindCollisions()
         {
-            List<CollisionManifold<TConcrete>> collisionManifolds = new List<CollisionManifold<TConcrete>>();
+            List<CollisionManifold<TNumber, TConcrete>> collisionManifolds = new List<CollisionManifold<TNumber, TConcrete>>();
 
             foreach (var (first, second) in _collidingBodies.DistinctPairs((a, b) => (a, b)))
             {
-                Collision collision = CalculateCollision(first.Key, second.Key);
+                Collision<TNumber> collision = CalculateCollision(first.Key, second.Key);
 
                 // if (collision.Occure)
-                    collisionManifolds.Add(new CollisionManifold<TConcrete>(first.Value, second.Value, collision));
+                    collisionManifolds.Add(new CollisionManifold<TNumber, TConcrete>(first.Value, second.Value, collision));
             }
 
             return collisionManifolds.ToArray();
         }
 
-        protected abstract Collision CalculateCollision(TCollider first, TCollider second);
+        protected abstract Collision<TNumber> CalculateCollision(TCollider first, TCollider second);
 
-        public void FindCollisionsNonAlloc(IWriteOnlyContainer<CollisionManifold<TConcrete>> output)
+        public void FindCollisionsNonAlloc(IWriteOnlyContainer<CollisionManifold<TNumber, TConcrete>> output)
         {
             foreach (var (first, second) in _collidingBodies.DistinctPairs((a, b) => (a, b)))
             {
-                Collision collision = CalculateCollision(first.Key, second.Key);
+                Collision<TNumber> collision = CalculateCollision(first.Key, second.Key);
 
                 // if (collision.Occure)
-                output.Add(new CollisionManifold<TConcrete>(first.Value, second.Value, collision));
+                output.Add(new CollisionManifold<TNumber, TConcrete>(first.Value, second.Value, collision));
             }
         }
     }

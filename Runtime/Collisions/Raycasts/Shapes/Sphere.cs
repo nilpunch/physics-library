@@ -1,10 +1,10 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics.Raycast
 {
-    public readonly struct Sphere
+    public readonly struct Sphere<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        public readonly SoftVector3 Center;
-        public readonly SoftFloat Radius;
+        public readonly Vector3<TNumber> Center;
+        public readonly Operand<TNumber> Radius;
     }
 }

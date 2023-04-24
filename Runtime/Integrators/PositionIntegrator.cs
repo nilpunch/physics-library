@@ -1,26 +1,27 @@
 ﻿using GameLibrary.Mathematics;
+using PluggableMath;
 
 namespace GameLibrary.Physics
 {
-    public class PositionIntegrator : IIntegrator
+    public class PositionIntegrator<TNumber> : IIntegrator<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly IReadOnlyContainer<IRigidbody> _rigidbodies;
+        private readonly IReadOnlyContainer<IRigidbody<TNumber>> _rigidbodies;
 
-        public PositionIntegrator(IReadOnlyContainer<IRigidbody> rigidbodies)
+        public PositionIntegrator(IReadOnlyContainer<IRigidbody<TNumber>> rigidbodies)
         {
             _rigidbodies = rigidbodies;
         }
 
-        public void Integrate(SoftFloat deltaTime)
+        public void Integrate(Operand<TNumber> deltaTime)
         {
             foreach (var rigidbody in _rigidbodies.Items)
             {
                 rigidbody.Position += rigidbody.LinearVelocity * deltaTime;
 
-                SoftVector3 angularVelocity = rigidbody.AngularVelocity;
+                Vector3<TNumber> angularVelocity = rigidbody.AngularVelocity;
 
-                SoftFloat halfDeltaTime = deltaTime * (SoftFloat)0.5f;
-                rigidbody.Rotation = SoftUnitQuaternion.EulerRadians(angularVelocity * deltaTime) * rigidbody.Rotation;
+                Operand<TNumber> halfDeltaTime = deltaTime * (Operand<TNumber>)0.5f;
+                rigidbody.Rotation = UnitQuaternion<TNumber>.EulerRadians(angularVelocity * deltaTime) * rigidbody.Rotation;
             }
         }
     }

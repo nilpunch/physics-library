@@ -1,44 +1,44 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics.Raycast
 {
-    public class DynamicCollider : IDoubleCastCollider
+    public class DynamicCollider<TNumber> : IDoubleCastCollider<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly IDoubleCastCollider _collider;
-        private readonly IReadOnlyTransform _transform;
+        private readonly IDoubleCastCollider<TNumber> _collider;
+        private readonly IReadOnlyTransform<TNumber> _transform;
 
-        public DynamicCollider(IReadOnlyTransform transform, IDoubleCastCollider collider)
+        public DynamicCollider(IReadOnlyTransform<TNumber> transform, IDoubleCastCollider<TNumber> collider)
         {
             _collider = collider;
             _transform = transform;
         }
 
-        public Collision BoxCast(Box box)
+        public Collision<TNumber> BoxCast(Box<TNumber> box)
         {
             return _collider.BoxCast(box);
         }
 
-        public Collision SphereCast(Sphere sphere)
+        public Collision<TNumber> SphereCast(Sphere<TNumber> sphere)
         {
             return _collider.SphereCast(sphere);
         }
 
-        public Collision ConvexHullCast(ConvexHull convexHull)
+        public Collision<TNumber> ConvexHullCast(ConvexHull<TNumber> convexHull)
         {
             return _collider.ConvexHullCast(convexHull);
         }
 
-        public Collision AABBCast(AABB aabb)
+        public Collision<TNumber> AABBCast(AABB<TNumber> aabb)
         {
             return _collider.AABBCast(aabb);
         }
 
-        public Collision Raycast(SoftVector3 @from, SoftVector3 direction)
+        public Collision<TNumber> Raycast(Vector3<TNumber> @from, Vector3<TNumber> direction)
         {
             return _collider.Raycast(from, direction);
         }
 
-        public Collision ColliderCast(IRaycastCollider collider)
+        public Collision<TNumber> ColliderCast(IRaycastCollider<TNumber> collider)
         {
             return _collider.ColliderCast(collider);
         }

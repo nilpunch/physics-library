@@ -1,14 +1,14 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics
 {
-    public struct ContactPoint
+    public struct ContactPoint<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        public ContactPoint(SoftVector3 position)
+        public ContactPoint(Vector3<TNumber> position)
         {
             Position = position;
         }
 
-        public SoftVector3 Position { get; }
+        public Vector3<TNumber> Position { get; }
     }
 }

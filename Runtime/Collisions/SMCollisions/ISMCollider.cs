@@ -1,17 +1,17 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics.SupportMapping
 {
     /// <summary>
     /// Collider for GJK collision detection, described by support mapping function.
     /// </summary>
-    public interface ISMCollider
+    public interface ISMCollider<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        SoftVector3 Centre { get; }
+        Vector3<TNumber> Centre { get; }
 
         /// <summary>
         /// Returns furthest point of object in some direction.
         /// </summary>
-        SoftVector3 SupportPoint(SoftVector3 direction);
+        Vector3<TNumber> SupportPoint(Vector3<TNumber> direction);
     }
 }

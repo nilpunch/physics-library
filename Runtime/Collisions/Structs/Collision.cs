@@ -1,19 +1,19 @@
 ﻿using System;
-using GameLibrary.Mathematics;
+using PluggableMath;
 
 namespace GameLibrary.Physics
 {
-    public readonly struct Collision
+    public readonly struct Collision<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        public ContactPoint ContactFirst { get; }
+        public ContactPoint<TNumber> ContactFirst { get; }
 
-        public ContactPoint ContactSecond { get; }
+        public ContactPoint<TNumber> ContactSecond { get; }
 
-        public SoftVector3 PenetrationNormal { get; }
+        public Vector3<TNumber> PenetrationNormal { get; }
 
-        public SoftFloat PenetrationDepth { get; }
+        public Operand<TNumber> PenetrationDepth { get; }
 
-        public Collision(ContactPoint contactFirst, ContactPoint contactSecond, SoftVector3 penetrationNormal, SoftFloat penetrationDepth)
+        public Collision(ContactPoint<TNumber> contactFirst, ContactPoint<TNumber> contactSecond, Vector3<TNumber> penetrationNormal, Operand<TNumber> penetrationDepth)
         {
             ContactFirst = contactFirst;
             PenetrationNormal = penetrationNormal;
@@ -21,12 +21,12 @@ namespace GameLibrary.Physics
             ContactSecond = contactSecond;
         }
 
-        public Collision Merge(Collision other)
+        public Collision<TNumber> Merge(Collision<TNumber> other)
         {
             throw new NotImplementedException();
         }
 
-        public Collision Merge(ContactPoint contactPoint)
+        public Collision<TNumber> Merge(ContactPoint<TNumber> contactPoint)
         {
             throw new NotImplementedException();
         }

@@ -1,8 +1,10 @@
-﻿namespace GameLibrary.Physics.Raycast
+﻿using PluggableMath;
+
+namespace GameLibrary.Physics.Raycast
 {
-    public interface IConcreteRaycastWorld<TConcrete> : IRaycastShooter<TConcrete>
+    public interface IConcreteRaycastWorld<TNumber, TConcrete> : IRaycastShooter<TNumber, TConcrete> where TNumber : struct, INumber<TNumber>
     {
-        void Add(IRaycastCollider collider, TConcrete concrete);
-        void Remove(IRaycastCollider collider);
+        void Add(IRaycastCollider<TNumber> collider, TConcrete concrete);
+        void Remove(IRaycastCollider<TNumber> collider);
     }
 }

@@ -1,10 +1,11 @@
 ﻿using GameLibrary.Mathematics;
+using PluggableMath;
 
 namespace GameLibrary.Physics
 {
-    public interface IReadOnlyTransform
+    public interface IReadOnlyTransform<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        SoftVector3 Position { get; set; }
-        SoftUnitQuaternion Rotation { get; set; }
+        Vector3<TNumber> Position { get; set; }
+        UnitQuaternion<TNumber> Rotation { get; set; }
     }
 }

@@ -1,53 +1,55 @@
-﻿namespace GameLibrary.Physics.Raycast
+﻿using PluggableMath;
+
+namespace GameLibrary.Physics.Raycast
 {
-    public static class AnalyticCollisionsLibrary
+    public static class AnalyticCollisionsLibrary<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        public static Collision BoxAgainstBox(Box first, Box second)
+        public static Collision<TNumber> BoxAgainstBox(Box<TNumber> first, Box<TNumber> second)
         {
             throw new System.NotImplementedException();
         }
 
-        public static Collision SphereAgainstBox(Sphere first, Box second)
+        public static Collision<TNumber> SphereAgainstBox(Sphere<TNumber> first, Box<TNumber> second)
         {
             throw new System.NotImplementedException();
         }
 
-        public static Collision SphereAgainstSphere(Sphere first, Sphere second)
+        public static Collision<TNumber> SphereAgainstSphere(Sphere<TNumber> first, Sphere<TNumber> second)
         {
             throw new System.NotImplementedException();
         }
 
-        public static Collision ConvexAgainstBox(ConvexHull first, Box second)
+        public static Collision<TNumber> ConvexAgainstBox(ConvexHull<TNumber> first, Box<TNumber> second)
         {
             throw new System.NotImplementedException();
         }
 
-        public static Collision ConvexAgainstSphere(ConvexHull first, Sphere second)
+        public static Collision<TNumber> ConvexAgainstSphere(ConvexHull<TNumber> first, Sphere<TNumber> second)
         {
             throw new System.NotImplementedException();
         }
 
-        public static Collision ConvexAgainstConvex(ConvexHull first, ConvexHull second)
+        public static Collision<TNumber> ConvexAgainstConvex(ConvexHull<TNumber> first, ConvexHull<TNumber> second)
         {
             throw new System.NotImplementedException();
         }
 
-        public static Collision AABBAgainstBox(AABB first, Box second)
+        public static Collision<TNumber> AABBAgainstBox(AABB<TNumber> first, Box<TNumber> second)
         {
             throw new System.NotImplementedException();
         }
 
-        public static Collision AABBAgainstSphere(AABB first, Sphere second)
+        public static Collision<TNumber> AABBAgainstSphere(AABB<TNumber> first, Sphere<TNumber> second)
         {
             throw new System.NotImplementedException();
         }
 
-        public static Collision AABBAgainstConvexHull(AABB first, ConvexHull second)
+        public static Collision<TNumber> AABBAgainstConvexHull(AABB<TNumber> first, ConvexHull<TNumber> second)
         {
             throw new System.NotImplementedException();
         }
 
-        public static Collision AABBAgainstAABB(AABB first, AABB second)
+        public static Collision<TNumber> AABBAgainstAABB(AABB<TNumber> first, AABB<TNumber> second)
         {
             throw new System.NotImplementedException();
         }

@@ -1,7 +1,9 @@
-﻿namespace GameLibrary.Physics
+﻿using PluggableMath;
+
+namespace GameLibrary.Physics
 {
-    public interface ICollisions<TBody>
+    public interface ICollisions<TNumber, TBody> where TNumber : struct, INumber<TNumber>
     {
-        void FindCollisionsNonAlloc(IWriteOnlyContainer<CollisionManifold<TBody>> output);
+        void FindCollisionsNonAlloc(IWriteOnlyContainer<CollisionManifold<TNumber, TBody>> output);
     }
 }

@@ -1,19 +1,19 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics.Raycast
 {
-    public class CompoundRaycastCollider : IDoubleCastCollider
+    public class CompoundRaycastCollider<TNumber> : IDoubleCastCollider<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly IDoubleCastCollider[] _collidingShells;
+        private readonly IDoubleCastCollider<TNumber>[] _collidingShells;
 
-        public CompoundRaycastCollider(IDoubleCastCollider[] collidingShells)
+        public CompoundRaycastCollider(IDoubleCastCollider<TNumber>[] collidingShells)
         {
             _collidingShells = collidingShells;
         }
 
-        public Collision ColliderCast(IRaycastCollider raycastCollider)
+        public Collision<TNumber> ColliderCast(IRaycastCollider<TNumber> raycastCollider)
         {
-            Collision collision = new Collision();
+            Collision<TNumber> collision = new Collision<TNumber>();
 
             foreach (var shell in _collidingShells)
                 collision = collision.Merge(shell.ColliderCast(raycastCollider));
@@ -21,9 +21,9 @@ namespace GameLibrary.Physics.Raycast
             return collision;
         }
 
-        public Collision BoxCast(Box box)
+        public Collision<TNumber> BoxCast(Box<TNumber> box)
         {
-            Collision collision = new Collision();
+            Collision<TNumber> collision = new Collision<TNumber>();
 
             foreach (var shell in _collidingShells)
                 collision = collision.Merge(shell.BoxCast(box));
@@ -31,9 +31,9 @@ namespace GameLibrary.Physics.Raycast
             return collision;
         }
 
-        public Collision SphereCast(Sphere sphere)
+        public Collision<TNumber> SphereCast(Sphere<TNumber> sphere)
         {
-            Collision collision = new Collision();
+            Collision<TNumber> collision = new Collision<TNumber>();
 
             foreach (var shell in _collidingShells)
                 collision = collision.Merge(shell.SphereCast(sphere));
@@ -41,9 +41,9 @@ namespace GameLibrary.Physics.Raycast
             return collision;
         }
 
-        public Collision ConvexHullCast(ConvexHull convexHull)
+        public Collision<TNumber> ConvexHullCast(ConvexHull<TNumber> convexHull)
         {
-            Collision collision = new Collision();
+            Collision<TNumber> collision = new Collision<TNumber>();
 
             foreach (var shell in _collidingShells)
                 collision = collision.Merge(shell.ConvexHullCast(convexHull));
@@ -51,9 +51,9 @@ namespace GameLibrary.Physics.Raycast
             return collision;
         }
 
-        public Collision AABBCast(AABB aabb)
+        public Collision<TNumber> AABBCast(AABB<TNumber> aabb)
         {
-            Collision collision = new Collision();
+            Collision<TNumber> collision = new Collision<TNumber>();
 
             foreach (var shell in _collidingShells)
                 collision = collision.Merge(shell.AABBCast(aabb));
@@ -61,9 +61,9 @@ namespace GameLibrary.Physics.Raycast
             return collision;
         }
 
-        public Collision Raycast(SoftVector3 @from, SoftVector3 direction)
+        public Collision<TNumber> Raycast(Vector3<TNumber> @from, Vector3<TNumber> direction)
         {
-            Collision collision = new Collision();
+            Collision<TNumber> collision = new Collision<TNumber>();
 
             foreach (var shell in _collidingShells)
                 collision = collision.Merge(shell.Raycast(from, direction));

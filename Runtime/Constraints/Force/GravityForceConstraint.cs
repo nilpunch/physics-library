@@ -1,19 +1,19 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics.SupportMapping
 {
-    public class GravityForceConstraint : IConstraint
+    public class GravityForceConstraint<TNumber> : IConstraint<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly IReadOnlyContainer<IRigidbody> _rigidbodies;
-        private readonly SoftVector3 _force;
+        private readonly IReadOnlyContainer<IRigidbody<TNumber>> _rigidbodies;
+        private readonly Vector3<TNumber> _force;
 
-        public GravityForceConstraint(IReadOnlyContainer<IRigidbody> rigidbodies, SoftVector3 force)
+        public GravityForceConstraint(IReadOnlyContainer<IRigidbody<TNumber>> rigidbodies, Vector3<TNumber> force)
         {
             _rigidbodies = rigidbodies;
             _force = force;
         }
 
-        public void Solve(SoftFloat deltaTime)
+        public void Solve(Operand<TNumber> deltaTime)
         {
             foreach (var rigidbody in _rigidbodies.Items)
             {

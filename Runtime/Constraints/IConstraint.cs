@@ -1,9 +1,9 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics
 {
-    public interface IConstraint
+    public interface IConstraint<TNumber> where TNumber : struct, INumber<TNumber>
     {
-		void Solve(SoftFloat deltaTime);
+		void Solve(Operand<TNumber> deltaTime);
 	}
 }

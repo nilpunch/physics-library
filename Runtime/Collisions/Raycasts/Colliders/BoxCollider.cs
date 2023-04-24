@@ -1,42 +1,42 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics.Raycast
 {
-    public class BoxCollider : IDoubleCastCollider
+    public class BoxCollider<TNumber> : IDoubleCastCollider<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly Box _box;
+        private readonly Box<TNumber> _box;
 
-        public BoxCollider(Box box)
+        public BoxCollider(Box<TNumber> box)
         {
             _box = box;
         }
 
-        public Collision ColliderCast(IRaycastCollider raycastCollider)
+        public Collision<TNumber> ColliderCast(IRaycastCollider<TNumber> raycastCollider)
         {
             return raycastCollider.BoxCast(_box);
         }
 
-        public Collision BoxCast(Box box)
+        public Collision<TNumber> BoxCast(Box<TNumber> box)
         {
-            return AnalyticCollisionsLibrary.BoxAgainstBox(_box, box);
+            return AnalyticCollisionsLibrary<TNumber>.BoxAgainstBox(_box, box);
         }
 
-        public Collision SphereCast(Sphere sphere)
+        public Collision<TNumber> SphereCast(Sphere<TNumber> sphere)
         {
-            return AnalyticCollisionsLibrary.SphereAgainstBox(sphere, _box);
+            return AnalyticCollisionsLibrary<TNumber>.SphereAgainstBox(sphere, _box);
         }
 
-        public Collision ConvexHullCast(ConvexHull convexHull)
+        public Collision<TNumber> ConvexHullCast(ConvexHull<TNumber> convexHull)
         {
-            return AnalyticCollisionsLibrary.ConvexAgainstBox(convexHull, _box);
+            return AnalyticCollisionsLibrary<TNumber>.ConvexAgainstBox(convexHull, _box);
         }
 
-        public Collision AABBCast(AABB aabb)
+        public Collision<TNumber> AABBCast(AABB<TNumber> aabb)
         {
-            return AnalyticCollisionsLibrary.AABBAgainstBox(aabb, _box);
+            return AnalyticCollisionsLibrary<TNumber>.AABBAgainstBox(aabb, _box);
         }
 
-        public Collision Raycast(SoftVector3 @from, SoftVector3 direction)
+        public Collision<TNumber> Raycast(Vector3<TNumber> @from, Vector3<TNumber> direction)
         {
             throw new System.NotImplementedException();
         }

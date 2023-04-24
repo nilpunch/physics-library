@@ -1,65 +1,66 @@
 ﻿using GameLibrary.Mathematics;
+using PluggableMath;
 
 namespace GameLibrary.Physics
 {
-    public interface IRigidbody : IReadOnlyTransform
+    public interface IRigidbody<TNumber> : IReadOnlyTransform<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        SoftVector3 Force { get; set; }
+        Vector3<TNumber> Force { get; set; }
 
-        SoftVector3 LinearVelocity { get; set; }
+        Vector3<TNumber> LinearVelocity { get; set; }
 
-        SoftVector3 AngularVelocity { get; set; }
+        Vector3<TNumber> AngularVelocity { get; set; }
 
-        SoftFloat Mass { get; set; }
+        Operand<TNumber> Mass { get; set; }
 
-        SoftFloat InverseMass
+        Operand<TNumber> InverseMass
         {
             get
             {
                 if (IsStatic)
-                    return SoftFloat.Zero;
+                    return Operand<TNumber>.Zero;
 
-                return SoftFloat.One / Mass;
+                return Operand<TNumber>.One / Mass;
             }
         }
 
-        SoftVector3 CenterOfMass { get; set; }
+        Vector3<TNumber> CenterOfMass { get; set; }
 
-        SoftVector3 CenterOfMassWorldSpace => Rotation * CenterOfMass + Position;
+        Vector3<TNumber> CenterOfMassWorldSpace => Rotation * CenterOfMass + Position;
 
-        SoftFloat ContactBeta => (SoftFloat)0.7f;
+        Operand<TNumber> ContactBeta => (Operand<TNumber>)0.7f;
 
-        SoftFloat Restitution => (SoftFloat)0.0f;
+        Operand<TNumber> Restitution => (Operand<TNumber>)0.0f;
 
-        SoftFloat Friction => (SoftFloat)1f;
+        Operand<TNumber> Friction => (Operand<TNumber>)1f;
 
-        Matrix3x3 InertiaTensor
+        Matrix3x3<TNumber> InertiaTensor
         {
             get
             {
-                return Matrix3x3.Identity;
+                return Matrix3x3<TNumber>.Identity;
             }
         }
 
-        Matrix3x3 InverseInertiaWorldSpace
+        Matrix3x3<TNumber> InverseInertiaWorldSpace
         {
             get
             {
                 if (IsStatic)
-                    return new Matrix3x3();
+                    return new Matrix3x3<TNumber>();
 
                 var world2Local =
-                    Matrix3x3.FromRows
+                    Matrix3x3<TNumber>.FromRows
                     (
-                        SoftUnitQuaternion.Inverse(Rotation) * new SoftVector3(SoftFloat.One, SoftFloat.Zero, SoftFloat.Zero),
-                        SoftUnitQuaternion.Inverse(Rotation) * new SoftVector3(SoftFloat.Zero, SoftFloat.One, SoftFloat.Zero),
-                        SoftUnitQuaternion.Inverse(Rotation) * new SoftVector3(SoftFloat.Zero, SoftFloat.Zero, SoftFloat.One)
+                        UnitQuaternion<TNumber>.Inverse(Rotation) * new Vector3<TNumber>(Operand<TNumber>.One, Operand<TNumber>.Zero, Operand<TNumber>.Zero),
+                        UnitQuaternion<TNumber>.Inverse(Rotation) * new Vector3<TNumber>(Operand<TNumber>.Zero, Operand<TNumber>.One, Operand<TNumber>.Zero),
+                        UnitQuaternion<TNumber>.Inverse(Rotation) * new Vector3<TNumber>(Operand<TNumber>.Zero, Operand<TNumber>.Zero, Operand<TNumber>.One)
                     );
                 return world2Local.Transposed * InertiaTensor.Inverted * world2Local;
 
                 var invertedInertia = InertiaTensor.Inverted;
 
-                return Matrix3x3.FromRows(
+                return Matrix3x3<TNumber>.FromRows(
                     Rotation * invertedInertia.Row0,
                     Rotation * invertedInertia.Row1,
                     Rotation * invertedInertia.Row2);

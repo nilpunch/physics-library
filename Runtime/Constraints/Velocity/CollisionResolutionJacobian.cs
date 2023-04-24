@@ -1,64 +1,64 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics
 {
-    public struct CollisionResolutionJacobian
+    public struct CollisionResolutionJacobian<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly CollisionManifold<IRigidbody> _collisionManifold;
+        private readonly CollisionManifold<TNumber, IRigidbody<TNumber>> _collisionManifold;
 
-        public SoftFloat Lambda { get; private set; }
+        public Operand<TNumber> Lambda { get; private set; }
 
-        public CollisionResolutionJacobian(CollisionManifold<IRigidbody> collisionManifold)
+        public CollisionResolutionJacobian(CollisionManifold<TNumber, IRigidbody<TNumber>> collisionManifold)
         {
             _collisionManifold = collisionManifold;
-            Lambda = SoftFloat.Zero;
+            Lambda = Operand<TNumber>.Zero;
         }
 
-        public void Resolve(SoftFloat dt)
+        public void Resolve(Operand<TNumber> dt)
         {
-            SoftVector3 fromCenterToContactA = _collisionManifold.Collision.ContactFirst.Position -
+            Vector3<TNumber> fromCenterToContactA = _collisionManifold.Collision.ContactFirst.Position -
                                                _collisionManifold.First.CenterOfMassWorldSpace;
-            SoftVector3 fromCenterToContactB = _collisionManifold.Collision.ContactSecond.Position -
+            Vector3<TNumber> fromCenterToContactB = _collisionManifold.Collision.ContactSecond.Position -
                                                _collisionManifold.Second.CenterOfMassWorldSpace;
 
-            SoftVector3 jacobianDirection = _collisionManifold.Collision.PenetrationNormal;
+            Vector3<TNumber> jacobianDirection = _collisionManifold.Collision.PenetrationNormal;
 
             var jacobianLinearVelocityA = -jacobianDirection;
-            var jacobianAngularVelocityA = -SoftVector3.Cross(fromCenterToContactA, jacobianDirection);
+            var jacobianAngularVelocityA = -Vector3<TNumber>.Cross(fromCenterToContactA, jacobianDirection);
             var jactobianLinearVelocityB = jacobianDirection;
-            var jacobianAngularVelocityB = SoftVector3.Cross(fromCenterToContactB, jacobianDirection);
+            var jacobianAngularVelocityB = Vector3<TNumber>.Cross(fromCenterToContactB, jacobianDirection);
 
 
-            SoftFloat beta = _collisionManifold.First.ContactBeta * _collisionManifold.Second.ContactBeta;
-            SoftFloat restitution = _collisionManifold.First.Restitution * _collisionManifold.Second.Restitution;
-            SoftVector3 relativeVelocity = -_collisionManifold.First.LinearVelocity -
-                                           SoftVector3.Cross(_collisionManifold.First.AngularVelocity,
+            Operand<TNumber> beta = _collisionManifold.First.ContactBeta * _collisionManifold.Second.ContactBeta;
+            Operand<TNumber> restitution = _collisionManifold.First.Restitution * _collisionManifold.Second.Restitution;
+            Vector3<TNumber> relativeVelocity = -_collisionManifold.First.LinearVelocity -
+                                           Vector3<TNumber>.Cross(_collisionManifold.First.AngularVelocity,
                                                fromCenterToContactA) +
                                            _collisionManifold.Second.LinearVelocity +
-                                           SoftVector3.Cross(_collisionManifold.Second.AngularVelocity,
+                                           Vector3<TNumber>.Cross(_collisionManifold.Second.AngularVelocity,
                                                fromCenterToContactB);
-            SoftFloat closingVelocity = SoftVector3.Dot(relativeVelocity, jacobianDirection);
+            Operand<TNumber> closingVelocity = Vector3<TNumber>.Dot(relativeVelocity, jacobianDirection);
             var bias = -(beta / dt) * _collisionManifold.Collision.PenetrationDepth + restitution * closingVelocity;
 
-            SoftFloat effectiveMassInverse = _collisionManifold.First.InverseMass +
-                                             SoftVector3.Dot(jacobianAngularVelocityA,
+            Operand<TNumber> effectiveMassInverse = _collisionManifold.First.InverseMass +
+                                             Vector3<TNumber>.Dot(jacobianAngularVelocityA,
                                                  _collisionManifold.First.InverseInertiaWorldSpace * jacobianAngularVelocityA) +
                                              _collisionManifold.Second.InverseMass +
-                                             SoftVector3.Dot(jacobianAngularVelocityB,
+                                             Vector3<TNumber>.Dot(jacobianAngularVelocityB,
                                                  _collisionManifold.Second.InverseInertiaWorldSpace * jacobianAngularVelocityB);
 
-            var effectiveMass = SoftFloat.One / effectiveMassInverse;
+            var effectiveMass = Operand<TNumber>.One / effectiveMassInverse;
 
             // JV = Jacobian * velocity vector
-            SoftFloat jv = SoftVector3.Dot(jacobianLinearVelocityA, _collisionManifold.First.LinearVelocity) +
-                           SoftVector3.Dot(jacobianAngularVelocityA, _collisionManifold.First.AngularVelocity) +
-                           SoftVector3.Dot(jactobianLinearVelocityB, _collisionManifold.Second.LinearVelocity) +
-                           SoftVector3.Dot(jacobianAngularVelocityB, _collisionManifold.Second.AngularVelocity);
+            Operand<TNumber> jv = Vector3<TNumber>.Dot(jacobianLinearVelocityA, _collisionManifold.First.LinearVelocity) +
+                           Vector3<TNumber>.Dot(jacobianAngularVelocityA, _collisionManifold.First.AngularVelocity) +
+                           Vector3<TNumber>.Dot(jactobianLinearVelocityB, _collisionManifold.Second.LinearVelocity) +
+                           Vector3<TNumber>.Dot(jacobianAngularVelocityB, _collisionManifold.Second.AngularVelocity);
 
             // raw lambda
-            SoftFloat lambda = effectiveMass * (-(jv + bias));
+            Operand<TNumber> lambda = effectiveMass * (-(jv + bias));
 
-            lambda = SoftMath.Max(SoftFloat.Zero, lambda);
+            lambda = Math<TNumber>.Max(Operand<TNumber>.Zero, lambda);
 
             Lambda = lambda;
 
@@ -84,81 +84,81 @@ namespace GameLibrary.Physics
     //
     //     Type m_type;
     //
-    //     private SoftVector3 _linearVelocityA; // Jacobian components for linear velocity of body A
-    //     private SoftVector3 _angularVelocityA; // Jacobian components for angular velocity of body A
-    //     private SoftVector3 _linearVelocityB; // Jacobian components for linear velocity of body B
-    //     private SoftVector3 _angularVelocityB; // Jacobian components for angular velocity of body B
-    //     private SoftFloat _bias;
-    //     private SoftFloat _effectiveMass;
-    //     private SoftFloat _totalLambda;
+    //     private Vector3<TNumber> _linearVelocityA; // Jacobian components for linear velocity of body A
+    //     private Vector3<TNumber> _angularVelocityA; // Jacobian components for angular velocity of body A
+    //     private Vector3<TNumber> _linearVelocityB; // Jacobian components for linear velocity of body B
+    //     private Vector3<TNumber> _angularVelocityB; // Jacobian components for angular velocity of body B
+    //     private Operand<TNumber> _bias;
+    //     private Operand<TNumber> _effectiveMass;
+    //     private Operand<TNumber> _totalLambda;
     //
     //     public Jacobian(Type type)
     //     {
     //         m_type = type;
-    //         _linearVelocityA = SoftVector3.Zero;
-    //         _angularVelocityA = SoftVector3.Zero;
-    //         _linearVelocityB = SoftVector3.Zero;
-    //         _angularVelocityB = SoftVector3.Zero;
-    //         _bias = SoftFloat.Zero;
-    //         _effectiveMass = SoftFloat.Zero;
-    //         _totalLambda = SoftFloat.Zero;
+    //         _linearVelocityA = Vector3<TNumber>.Zero;
+    //         _angularVelocityA = Vector3<TNumber>.Zero;
+    //         _linearVelocityB = Vector3<TNumber>.Zero;
+    //         _angularVelocityB = Vector3<TNumber>.Zero;
+    //         _bias = Operand<TNumber>.Zero;
+    //         _effectiveMass = Operand<TNumber>.Zero;
+    //         _totalLambda = Operand<TNumber>.Zero;
     //     }
     //
-    //     public void Init(Contact _collisionManifold, SoftVector3 dir, SoftFloat dt)
+    //     public void Init(Contact _collisionManifold, Vector3<TNumber> dir, Operand<TNumber> dt)
     //     {
     //         _linearVelocityA = -dir;
-    //         _angularVelocityA = -SoftVector3.Cross(fromCenterToContactA, dir);
+    //         _angularVelocityA = -Vector3<TNumber>.Cross(fromCenterToContactA, dir);
     //         _linearVelocityB = dir;
-    //         _angularVelocityB = SoftVector3.Cross(fromCenterToContactB, dir);
+    //         _angularVelocityB = Vector3<TNumber>.Cross(fromCenterToContactB, dir);
     //
-    //         _bias = SoftFloat.Zero;
+    //         _bias = Operand<TNumber>.Zero;
     //         if (m_type == Type.Normal)
     //         {
-    //             SoftFloat beta = _collisionManifold.First.ContactBeta * _collisionManifold.Second.ContactBeta;
-    //             SoftFloat restitution = _collisionManifold.First.Restitution * _collisionManifold.Second.Restitution;
-    //             SoftVector3 relativeVelocity = -_collisionManifold.First.LinearVelocity -
-    //                                            SoftVector3.Cross(_collisionManifold.First.AngularVelocity,
+    //             Operand<TNumber> beta = _collisionManifold.First.ContactBeta * _collisionManifold.Second.ContactBeta;
+    //             Operand<TNumber> restitution = _collisionManifold.First.Restitution * _collisionManifold.Second.Restitution;
+    //             Vector3<TNumber> relativeVelocity = -_collisionManifold.First.LinearVelocity -
+    //                                            Vector3<TNumber>.Cross(_collisionManifold.First.AngularVelocity,
     //                                                fromCenterToContactA) +
     //                                            _collisionManifold.Second.LinearVelocity +
-    //                                            SoftVector3.Cross(_collisionManifold.Second.AngularVelocity,
+    //                                            Vector3<TNumber>.Cross(_collisionManifold.Second.AngularVelocity,
     //                                                fromCenterToContactB);
-    //             SoftFloat closingVelocity = SoftVector3.Dot(relativeVelocity, dir);
+    //             Operand<TNumber> closingVelocity = Vector3<TNumber>.Dot(relativeVelocity, dir);
     //             _bias = -(beta / dt) * _collisionManifold.Penetration + restitution * closingVelocity;
     //         }
     //
-    //         SoftFloat effectiveMassInverse = _collisionManifold.First.InverseMass + SoftVector3.Dot(_angularVelocityA, _collisionManifold.First.InverseInertiaWs * _angularVelocityA) +
-    //                       _collisionManifold.Second.InverseMass + SoftVector3.Dot(_angularVelocityB, _collisionManifold.Second.InverseInertiaWs * _angularVelocityB);
+    //         Operand<TNumber> effectiveMassInverse = _collisionManifold.First.InverseMass + Vector3<TNumber>.Dot(_angularVelocityA, _collisionManifold.First.InverseInertiaWs * _angularVelocityA) +
+    //                       _collisionManifold.Second.InverseMass + Vector3<TNumber>.Dot(_angularVelocityB, _collisionManifold.Second.InverseInertiaWs * _angularVelocityB);
     //
-    //         _effectiveMass = SoftFloat.One / effectiveMassInverse;
-    //         _totalLambda = SoftFloat.Zero;
+    //         _effectiveMass = Operand<TNumber>.One / effectiveMassInverse;
+    //         _totalLambda = Operand<TNumber>.Zero;
     //     }
     //
-    //     public void Resolve(Contact _collisionManifold, SoftFloat dt)
+    //     public void Resolve(Contact _collisionManifold, Operand<TNumber> dt)
     //     {
-    //         SoftVector3 dir = _linearVelocityB;
+    //         Vector3<TNumber> dir = _linearVelocityB;
     //
     //         // JV = Jacobian * velocity vector
-    //         SoftFloat jv = SoftVector3.Dot(_linearVelocityA, _collisionManifold.First.LinearVelocity) +
-    //                        SoftVector3.Dot(_angularVelocityA, _collisionManifold.First.AngularVelocity) +
-    //                        SoftVector3.Dot(_linearVelocityB, _collisionManifold.Second.LinearVelocity) +
-    //                        SoftVector3.Dot(_angularVelocityB, _collisionManifold.Second.AngularVelocity);
+    //         Operand<TNumber> jv = Vector3<TNumber>.Dot(_linearVelocityA, _collisionManifold.First.LinearVelocity) +
+    //                        Vector3<TNumber>.Dot(_angularVelocityA, _collisionManifold.First.AngularVelocity) +
+    //                        Vector3<TNumber>.Dot(_linearVelocityB, _collisionManifold.Second.LinearVelocity) +
+    //                        Vector3<TNumber>.Dot(_angularVelocityB, _collisionManifold.Second.AngularVelocity);
     //
     //         // raw lambda
-    //         SoftFloat lambda = _effectiveMass * (-(jv + _bias));
+    //         Operand<TNumber> lambda = _effectiveMass * (-(jv + _bias));
     //
     //         // clamped lambda
     //         //   normal  / _collisionManifold resolution  :  lambda >= 0
     //         //   tangent / friction            :  -maxFriction <= lambda <= maxFriction
-    //         SoftFloat oldTotalLambda = _totalLambda;
+    //         Operand<TNumber> oldTotalLambda = _totalLambda;
     //         switch (m_type)
     //         {
     //             case Type.Normal:
-    //                 _totalLambda = Mathf.Max(SoftFloat.Zero, _totalLambda + lambda);
+    //                 _totalLambda = Mathf.Max(Operand<TNumber>.Zero, _totalLambda + lambda);
     //                 break;
     //
     //             case Type.Tangent:
-    //                 SoftFloat friction = _collisionManifold.First.Friction * _collisionManifold.Second.Friction;
-    //                 SoftFloat maxFriction = friction * _collisionManifold.m_jN.m_totalLambda;
+    //                 Operand<TNumber> friction = _collisionManifold.First.Friction * _collisionManifold.Second.Friction;
+    //                 Operand<TNumber> maxFriction = friction * _collisionManifold.m_jN.m_totalLambda;
     //                 _totalLambda = Mathf.Clamp(_totalLambda + lambda, -maxFriction, maxFriction);
     //                 break;
     //         }

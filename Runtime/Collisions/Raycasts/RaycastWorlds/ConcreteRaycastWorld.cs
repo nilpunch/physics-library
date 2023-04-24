@@ -1,29 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using GameLibrary.Mathematics;
+using PluggableMath;
 
 namespace GameLibrary.Physics.Raycast
 {
-    public class ConcreteRaycastWorld<TConcrete> : IConcreteRaycastWorld<TConcrete>
+    public class ConcreteRaycastWorld<TNumber, TConcrete> : IConcreteRaycastWorld<TNumber, TConcrete> where TNumber : struct, INumber<TNumber>
     {
-        private readonly Dictionary<IRaycastCollider, TConcrete> _colliders;
+        private readonly Dictionary<IRaycastCollider<TNumber>, TConcrete> _colliders;
 
         public ConcreteRaycastWorld()
         {
-            _colliders = new Dictionary<IRaycastCollider, TConcrete>();
+            _colliders = new Dictionary<IRaycastCollider<TNumber>, TConcrete>();
         }
 
-        public void Add(IRaycastCollider collider, TConcrete concrete)
+        public void Add(IRaycastCollider<TNumber> collider, TConcrete concrete)
         {
             _colliders.Add(collider, concrete);
         }
 
-        public void Remove(IRaycastCollider collider)
+        public void Remove(IRaycastCollider<TNumber> collider)
         {
             _colliders.Remove(collider);
         }
 
-        public ConcreteRaycastHit<TConcrete> Raycast(SoftVector3 from, SoftVector3 direction)
+        public ConcreteRaycastHit<TNumber, TConcrete> Raycast(Vector3<TNumber> from, Vector3<TNumber> direction)
         {
             throw new NotImplementedException();
         }

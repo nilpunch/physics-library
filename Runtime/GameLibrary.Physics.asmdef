@@ -2,7 +2,7 @@
     "name": "GameLibrary.Physics",
     "rootNamespace": "",
     "references": [
-        "GUID:4e4e9db485367974ba99b2fb7f19741d"
+        "GUID:f58a470f36dfbd845886b97776f8079f"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

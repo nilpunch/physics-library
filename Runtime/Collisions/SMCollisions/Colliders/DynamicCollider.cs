@@ -1,20 +1,20 @@
-﻿using System;
-using GameLibrary.Mathematics;
+﻿using GameLibrary.Mathematics;
+using PluggableMath;
 
 namespace GameLibrary.Physics.SupportMapping
 {
-    public class DynamicCollider : ISMCollider
+    public class DynamicCollider<TNumber> : ISMCollider<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly ISMCollider _collider;
-        private readonly IReadOnlyTransform _readOnlyTransform;
+        private readonly ISMCollider<TNumber> _collider;
+        private readonly IReadOnlyTransform<TNumber> _readOnlyTransform;
 
-        public DynamicCollider(IReadOnlyTransform readOnlyTransform, ISMCollider collider)
+        public DynamicCollider(IReadOnlyTransform<TNumber> readOnlyTransform, ISMCollider<TNumber> collider)
         {
             _collider = collider;
             _readOnlyTransform = readOnlyTransform;
         }
 
-        public SoftVector3 Centre
+        public Vector3<TNumber> Centre
         {
             get
             {
@@ -23,9 +23,9 @@ namespace GameLibrary.Physics.SupportMapping
             }
         }
 
-        public SoftVector3 SupportPoint(SoftVector3 direction)
+        public Vector3<TNumber> SupportPoint(Vector3<TNumber> direction)
         {
-            SoftVector3 rotatedDirection = SoftUnitQuaternion.Inverse(_readOnlyTransform.Rotation) * direction;
+            Vector3<TNumber> rotatedDirection = UnitQuaternion<TNumber>.Inverse(_readOnlyTransform.Rotation) * direction;
             var supportPoint = _collider.SupportPoint(rotatedDirection);
             var transformedSupportPoint = _readOnlyTransform.Rotation * supportPoint + _readOnlyTransform.Position;
             return transformedSupportPoint;

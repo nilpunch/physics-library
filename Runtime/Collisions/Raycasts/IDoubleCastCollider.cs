@@ -1,7 +1,9 @@
-﻿namespace GameLibrary.Physics.Raycast
+﻿using PluggableMath;
+
+namespace GameLibrary.Physics.Raycast
 {
-    public interface IDoubleCastCollider : IRaycastCollider
+    public interface IDoubleCastCollider<TNumber> : IRaycastCollider<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        Collision ColliderCast(IRaycastCollider collider);
+        Collision<TNumber> ColliderCast(IRaycastCollider<TNumber> collider);
     }
 }

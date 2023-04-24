@@ -1,9 +1,9 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics
 {
-    public interface IPhysicSimulation
+    public interface IPhysicSimulation<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        void Step(SoftFloat deltaTime);
+        void Step(Operand<TNumber> deltaTime);
     }
 }

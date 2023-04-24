@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using GameLibrary.Mathematics;
+using PluggableMath;
 
 namespace GameLibrary.Physics.Raycast
 {
-    public class RaycastWriteOnlySubContainer : IRaycastWriteOnlyContainer
+    public class RaycastWriteOnlySubContainer<TNumber> : IRaycastWriteOnlyContainer<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly IRaycastWriteOnlyContainer _parent;
-        private readonly List<IRaycastCollider> _localColliders;
+        private readonly IRaycastWriteOnlyContainer<TNumber> _parent;
+        private readonly List<IRaycastCollider<TNumber>> _localColliders;
 
-        public RaycastWriteOnlySubContainer(IRaycastWriteOnlyContainer parent)
+        public RaycastWriteOnlySubContainer(IRaycastWriteOnlyContainer<TNumber> parent)
         {
             _parent = parent;
-            _localColliders = new List<IRaycastCollider>();
+            _localColliders = new List<IRaycastCollider<TNumber>>();
         }
 
-        public void Add(IRaycastCollider item)
+        public void Add(IRaycastCollider<TNumber> item)
         {
             _parent.Add(item);
             _localColliders.Add(item);
         }
 
-        public void Remove(IRaycastCollider item)
+        public void Remove(IRaycastCollider<TNumber> item)
         {
             _parent.Remove(item);
             _localColliders.Remove(item);
@@ -36,7 +36,7 @@ namespace GameLibrary.Physics.Raycast
             _localColliders.Clear();
         }
 
-        public ConcreteRaycastHit<IRaycastCollider> Raycast(SoftVector3 from, SoftVector3 direction)
+        public ConcreteRaycastHit<TNumber, IRaycastCollider<TNumber>> Raycast(Vector3<TNumber> from, Vector3<TNumber> direction)
         {
             throw new NotImplementedException();
         }

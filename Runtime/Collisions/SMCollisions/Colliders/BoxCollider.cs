@@ -1,14 +1,14 @@
 ﻿using System;
-using GameLibrary.Mathematics;
+using PluggableMath;
 
 namespace GameLibrary.Physics.SupportMapping
 {
-    public class BoxCollider : ISMCollider
+    public class BoxCollider<TNumber> : ISMCollider<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly SoftVector3 _centre;
-        private readonly SoftVector3 _extents;
+        private readonly Vector3<TNumber> _centre;
+        private readonly Vector3<TNumber> _extents;
 
-        public BoxCollider(SoftVector3 centre, SoftVector3 extents)
+        public BoxCollider(Vector3<TNumber> centre, Vector3<TNumber> extents)
         {
             _centre = centre;
             _extents = extents;
@@ -17,11 +17,11 @@ namespace GameLibrary.Physics.SupportMapping
 
         public Guid Id { get; }
 
-        public SoftVector3 Centre => _centre;
+        public Vector3<TNumber> Centre => _centre;
 
-        public SoftVector3 SupportPoint(SoftVector3 direction)
+        public Vector3<TNumber> SupportPoint(Vector3<TNumber> direction)
         {
-            return _centre + _extents * SoftVector3.SignComponents(direction);
+            return _centre + _extents * Vector3<TNumber>.SignComponents(direction);
         }
     }
 }

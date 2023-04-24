@@ -1,17 +1,17 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics
 {
-    public class IntegrationSimulationStep : IPhysicSimulationStep
+    public class IntegrationSimulationStep<TNumber> : IPhysicSimulationStep<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly IIntegrator _integrator;
+        private readonly IIntegrator<TNumber> _integrator;
 
-        public IntegrationSimulationStep(IIntegrator integrator)
+        public IntegrationSimulationStep(IIntegrator<TNumber> integrator)
         {
             _integrator = integrator;
         }
-        
-        public void Step(SoftFloat deltaTime)
+
+        public void Step(Operand<TNumber> deltaTime)
         {
             _integrator.Integrate(deltaTime);
         }

@@ -1,38 +1,37 @@
-﻿using System.Collections.Generic;
-using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics.SupportMapping
 {
-    public class ContactPositionConstraint : IConstraint
+    public class ContactPositionConstraint<TNumber> : IConstraint<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        private readonly ICollisions<IRigidbody> _collisions;
-        private readonly IContainer<CollisionManifold<IRigidbody>> _collisionsBuffer;
+        private readonly ICollisions<TNumber, IRigidbody<TNumber>> _collisions;
+        private readonly IContainer<CollisionManifold<TNumber, IRigidbody<TNumber>>> _collisionsBuffer;
 
-        public ContactPositionConstraint(ICollisions<IRigidbody> collisions)
+        public ContactPositionConstraint(ICollisions<TNumber, IRigidbody<TNumber>> collisions)
         {
             _collisions = collisions;
-            _collisionsBuffer = new Container<CollisionManifold<IRigidbody>>();
+            _collisionsBuffer = new Container<CollisionManifold<TNumber, IRigidbody<TNumber>>>();
         }
 
-        public void Solve(SoftFloat deltaTime)
+        public void Solve(Operand<TNumber> deltaTime)
         {
             _collisionsBuffer.Clear();
             _collisions.FindCollisionsNonAlloc(_collisionsBuffer);
 
-            foreach (CollisionManifold<IRigidbody> collisionManifold in _collisionsBuffer.Items)
+            foreach (CollisionManifold<TNumber, IRigidbody<TNumber>> collisionManifold in _collisionsBuffer.Items)
             {
                 var firstBody = collisionManifold.First;
                 var secondBody = collisionManifold.Second;
 
-                SoftFloat firstStatic = firstBody.IsStatic ? SoftFloat.One : SoftFloat.Zero;
-                SoftFloat secondStatic = secondBody.IsStatic ? SoftFloat.One : SoftFloat.Zero;
+                Operand<TNumber> firstStatic = firstBody.IsStatic ? Operand<TNumber>.One : Operand<TNumber>.Zero;
+                Operand<TNumber> secondStatic = secondBody.IsStatic ? Operand<TNumber>.One : Operand<TNumber>.Zero;
 
-                SoftVector3 resolution = collisionManifold.Collision.PenetrationNormal
+                Vector3<TNumber> resolution = collisionManifold.Collision.PenetrationNormal
                     * collisionManifold.Collision.PenetrationDepth
-                    / SoftMath.Max(SoftFloat.One, firstStatic + secondStatic);
+                    / Math<TNumber>.Max(Operand<TNumber>.One, firstStatic + secondStatic);
 
-                firstBody.Position -= resolution * (SoftFloat.One - firstStatic);
-                secondBody.Position += resolution * (SoftFloat.One - secondStatic);
+                firstBody.Position -= resolution * (Operand<TNumber>.One - firstStatic);
+                secondBody.Position += resolution * (Operand<TNumber>.One - secondStatic);
             }
         }
     }

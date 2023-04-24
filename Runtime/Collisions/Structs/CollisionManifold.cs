@@ -1,10 +1,10 @@
-﻿using System;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics
 {
-    public readonly struct CollisionManifold<TBody>
+    public readonly struct CollisionManifold<TNumber, TBody> where TNumber : struct, INumber<TNumber>
     {
-        public CollisionManifold(TBody first, TBody second, Collision collision)
+        public CollisionManifold(TBody first, TBody second, Collision<TNumber> collision)
         {
             First = first;
             Second = second;
@@ -13,6 +13,6 @@ namespace GameLibrary.Physics
 
         public TBody First { get; }
         public TBody Second { get; }
-        public Collision Collision { get; }
+        public Collision<TNumber> Collision { get; }
     }
 }

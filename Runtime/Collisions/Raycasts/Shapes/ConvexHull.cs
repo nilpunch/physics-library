@@ -1,10 +1,10 @@
-﻿using GameLibrary.Mathematics;
+﻿using PluggableMath;
 
 namespace GameLibrary.Physics.Raycast
 {
-    public struct ConvexHull
+    public struct ConvexHull<TNumber> where TNumber : struct, INumber<TNumber>
     {
-        SoftVector3 Center { get; }
-        Mesh Mesh { get; }
+        Vector3<TNumber> Center { get; }
+        Mesh<TNumber> Mesh { get; }
     }
 }
